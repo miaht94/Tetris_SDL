@@ -2,10 +2,8 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-
-#include "View.h"
 #include "Common.h"
-#include "board.h"
+#include "Board.h"
 
 using namespace std;
 

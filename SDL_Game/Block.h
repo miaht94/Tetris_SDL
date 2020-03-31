@@ -1,7 +1,10 @@
 #pragma once
-#include "View.h"
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <SDL.h>
 #include "Common.h"
-class Block : public View
+class Block
 {
 public:
 /*
@@ -18,17 +21,14 @@ Type 2: (Only I Block)
 	|__9__|_10__|_11__|_12__|
 	|_13__|_14__|_15__|_16__|
 */
-	const int FIGURE[6][4] = {
-							{5,  6,  7,   8}, // S
-							{4,  5,  8,   9}, // Z
-							{2,  6, 10,  14}, // I
-							{2,  5,  8,   9}, // L
-							{2,  5,  8,   7}, // _|
-							{4,  5,  6,   8}, // T 
-	};
-
-
-
-	int render();
+	int matrix[4][4] = { {0} };
+	SDL_Point matrix_origin_point = { 0,0 };
+	int current_block = -1;
+	int current_color = -1;
+	
+	Block();
+	~Block();
+	void rotate();
+	int Render();
 };
 

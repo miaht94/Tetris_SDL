@@ -89,6 +89,7 @@ int View::render() {
 
 };
 
+//Function return false when Texture = NULL
 bool View::loadTexture(string path, bool have_color_key) {
 
 	SDL_Surface* temp = IMG_Load(path.c_str());

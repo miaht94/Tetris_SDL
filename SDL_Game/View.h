@@ -49,6 +49,7 @@ public:
 
 	int setRenderer(SDL_Renderer* renderer);
 
+	//Function return false when Texture = NULL
 	bool loadTexture(string path, bool have_color_key = false);
 
 	int clipImage(int x, int y, int width, int height);
