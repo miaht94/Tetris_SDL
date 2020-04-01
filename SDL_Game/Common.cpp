@@ -1,8 +1,7 @@
 #include "Common.h"
 
-
 using namespace std;
-
+extern SDL_Window* gWindow;
 // Function to config game
 bool Init() {
 	SDL_Init(SDL_INIT_VIDEO);
@@ -13,9 +12,34 @@ bool Init() {
 	}
 	else return true;
 };
+/*bool playGame() {
+	
+	gRenderer = SDL_CreateRenderer(gWindow, -1, NULL);
+	Board board(gRenderer);
+	Block curr_block;
+	curr_block.matrix_origin_point.x = 8;
+	curr_block.matrix_origin_point.y = 8;
+	int prev_time = 0;
+	while (true) {
+		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+		SDL_RenderClear(gRenderer);
+		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+		board.drawNet();
+		int curr_time = SDL_GetTicks();
+		if (curr_time - prev_time >= 1000) {
+			curr_block.matrix_origin_point.y++;
+			prev_time = curr_time;
+		};
+		board.renderBoard(curr_block);
+		SDL_RenderPresent(gRenderer);
+	};
+	SDL_DestroyRenderer(gRenderer);
+	SDL_DestroyWindow(gWindow);
+	
+};*/
 
 
-// Function for process Block
+// Function for Block Processing
 void copyMatrix(int src[][4], int des[][4], int n) {
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {

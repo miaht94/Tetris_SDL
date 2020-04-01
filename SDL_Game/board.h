@@ -3,9 +3,10 @@
 #include "View.h"
 #include "Block.h"
 
-using namespace std;
 class Board
 {
+	private:
+		SDL_Renderer* renderer;
 	public:
 		const int width_square = WIDTH_SQUARE;
 		const int height_square = HEIGHT_SQUARE;
@@ -18,9 +19,8 @@ class Board
 		int static_board[WIDTH_SQUARE][HEIGHT_SQUARE];
 
 		View pieces;
-		SDL_Renderer* renderer;
 
-		Board();
+		Board(SDL_Renderer* renderer);
 		~Board();
 		void initMaterial();
 		void setRenderer(SDL_Renderer* renderer);

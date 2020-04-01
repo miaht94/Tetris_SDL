@@ -4,19 +4,23 @@
 #include <SDL_ttf.h>
 #include "Common.h"
 #include "Board.h"
-
 using namespace std;
 
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
+
 int main(int agrc, char* argv[]) {
 	
 	if (Init()) {
 
 		gRenderer = SDL_CreateRenderer(gWindow, -1, NULL);
-		Board board;
-		board.setRenderer(gRenderer);
+		Board board(gRenderer);
 		board.drawNet();
+		Block block;
+		cout << block.current_block << endl;;
+		SDL_Point point = { 10,10 };
+		block.matrix_origin_point = point;
+		board.renderBoard(block);
 		SDL_RenderPresent(gRenderer);
 		SDL_Delay(20000);
 		SDL_DestroyRenderer(gRenderer);

@@ -1,9 +1,12 @@
 #pragma once
 #include <iostream>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <SDL.h>
+
 using namespace std;
 
-extern SDL_Window* gWindow;
+
 const int LENGTH_SQUARE = 30;
 const int WIDTH_SQUARE = 15;
 const int HEIGHT_SQUARE = 20;
@@ -26,7 +29,7 @@ const int FIGURE[6][4] = {
 							{4,  5,  8,   9}, // Z
 							{2,  6, 10,  14}, // I
 							{2,  5,  8,   9}, // L
-							{2,  5,  8,   7}, // _|
+							{2,  5,  7,   8}, // _|
 							{4,  5,  6,   8}, // T 
 };
 // EDGE'S LENGTH of each matrix's FIGURE (2 type : 3x3 (almost block) , 4x4 (only I block)) 
@@ -39,6 +42,7 @@ const int OFFSET_Y = 2;
 //bool checkResource(View view);
 // Function to config game
 bool Init();
+//bool playGame();
 
 
 // Function for process Block
