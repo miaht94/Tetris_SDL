@@ -1,12 +1,7 @@
 #pragma once
 #include <iostream>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
-#include <SDL.h>
 
 using namespace std;
-
-
 const int LENGTH_SQUARE = 30;
 const int WIDTH_SQUARE = 15;
 const int HEIGHT_SQUARE = 20;
@@ -38,12 +33,6 @@ const int LENGTH_EDGE[6] = { 3, 3, 4, 3, 3, 3 };
 // to access the player_board[x][y] must access board[OFFSET_X + x][OFFSET_Y + y] 
 const int OFFSET_X = 4;
 const int OFFSET_Y = 2;
-
-//bool checkResource(View view);
-// Function to config game
-bool Init();
-//bool playGame();
-
 
 // Function for process Block
 void rotate(int matrix[][4], int n);
