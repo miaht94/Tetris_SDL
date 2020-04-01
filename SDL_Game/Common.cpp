@@ -12,6 +12,16 @@ void copyMatrix(int src[][4], int des[][4], int n) {
 		}
 	}
 }
+void copyBoard(int src[][HEIGHT_SQUARE + OFFSET_Y + 1], int des[][HEIGHT_SQUARE + OFFSET_Y + 1])
+{
+	for (int i = 0; i < WIDTH_SQUARE+OFFSET_X; i++) {
+		for (int j = 0; j < HEIGHT_SQUARE+2*OFFSET_Y; j++) {
+
+			des[i][j] = src[i][j];
+
+		}
+	}
+}
 void rotate(int matrix[][4], int n) {
 	int temp_matrix[4][4];
 	copyMatrix(matrix, temp_matrix, n);

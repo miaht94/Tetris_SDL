@@ -12,11 +12,11 @@ class Board
 		const int height_square = HEIGHT_SQUARE;
 
 		//array for background processing
-		int board[WIDTH_SQUARE+ OFFSET_X][HEIGHT_SQUARE + 2*OFFSET_Y] = { {0} };
+		int board[WIDTH_SQUARE + 2*OFFSET_X][HEIGHT_SQUARE + OFFSET_Y + 1] = { {0} };
 
 		//array for rendering what player can see
 		//static board will be update whenever block finished its fall
-		int static_board[WIDTH_SQUARE][HEIGHT_SQUARE];
+		int static_board[WIDTH_SQUARE + 2*OFFSET_X][HEIGHT_SQUARE + OFFSET_Y + 1];
 
 		View pieces;
 
@@ -27,8 +27,11 @@ class Board
 		void drawNet(SDL_Point start_point = { 0,0 });
 
 		// Danger: Must check available before setMatrix because have no checkAvailable in this function
-		void setMatrix(int matrix[][4], int board[][HEIGHT_SQUARE+2*OFFSET_Y], SDL_Point location,int curr_block);
+		void setMatrix(int matrix[][4], int board[][HEIGHT_SQUARE + OFFSET_Y + 1], SDL_Point location,int curr_block);
 
 		//parram Block block: current Block moving on the board
 		void renderBoard(Block block);
+
+		// True if available; False if not
+		bool isAvailable(int matrix[][4], int board[][HEIGHT_SQUARE + OFFSET_Y + 1], SDL_Point location);
 };

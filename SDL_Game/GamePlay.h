@@ -21,15 +21,23 @@ void playGame() {
 	Block curr_block;
 	curr_block.matrix_origin_point.x = 8;
 	curr_block.matrix_origin_point.y = 8;
-	int prev_time = 0;
+	Uint32 prev_time = 0;
 	while (true) {
 		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 		SDL_RenderClear(gRenderer);
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
 		board.drawNet();
-		int curr_time = SDL_GetTicks();
+		Uint32 curr_time = SDL_GetTicks();
 		if (curr_time - prev_time >= 1000) {
-			curr_block.matrix_origin_point.y++;
+			SDL_Point next_point = { curr_block.matrix_origin_point.x,curr_block.matrix_origin_point.y };
+			if (board.isAvailable(curr_block.matrix, board.static_board, next_point)) {
+				curr_block.matrix_origin_point.y++;
+			}
+			else {
+				board.setMatrix(curr_block.matrix, board.static_board, curr_block.matrix_origin_point, curr_block.current_block);
+				Block next_block;
+				curr_block = next_block;
+			}
 			prev_time = curr_time;
 		};
 		board.renderBoard(curr_block);

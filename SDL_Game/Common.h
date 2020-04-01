@@ -31,9 +31,10 @@ const int FIGURE[6][4] = {
 const int LENGTH_EDGE[6] = { 3, 3, 4, 3, 3, 3 };
 // Because Board exceed 4 square on TOP to render block at starting point
 // to access the player_board[x][y] must access board[OFFSET_X + x][OFFSET_Y + y] 
-const int OFFSET_X = 4;
-const int OFFSET_Y = 2;
+const int OFFSET_X = 2;
+const int OFFSET_Y = 4;
 
 // Function for process Block
 void rotate(int matrix[][4], int n);
 void copyMatrix(int src[][4], int des[][4], int n);
+void copyBoard(int src[][HEIGHT_SQUARE + OFFSET_Y + 1], int des[][HEIGHT_SQUARE + OFFSET_Y + 1]);
