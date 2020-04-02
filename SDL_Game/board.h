@@ -33,5 +33,5 @@ class Board
 		void renderBoard(Block block);
 
 		// True if available; False if not
-		bool isAvailable(int matrix[][4], int board[][HEIGHT_SQUARE + OFFSET_Y + 1], SDL_Point location);
+		bool isAvailable(int matrix[][4], int board[][HEIGHT_SQUARE + OFFSET_Y + 1], SDL_Point location, int curr_block);
 };

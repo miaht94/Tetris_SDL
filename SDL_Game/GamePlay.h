@@ -29,8 +29,8 @@ void playGame() {
 		board.drawNet();
 		Uint32 curr_time = SDL_GetTicks();
 		if (curr_time - prev_time >= 1000) {
-			SDL_Point next_point = { curr_block.matrix_origin_point.x,curr_block.matrix_origin_point.y };
-			if (board.isAvailable(curr_block.matrix, board.static_board, next_point)) {
+			SDL_Point next_point = { curr_block.matrix_origin_point.x,curr_block.matrix_origin_point.y + 1 };
+			if (board.isAvailable(curr_block.matrix, board.static_board, next_point, curr_block.current_block)) {
 				curr_block.matrix_origin_point.y++;
 			}
 			else {

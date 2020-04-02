@@ -3,15 +3,15 @@ Board::Board(SDL_Renderer* renderer)
 {
 	Board::setRenderer(renderer);
 	for (int i = 0; i < WIDTH_SQUARE + 2 * OFFSET_X; i++) {
-		this->board[i][HEIGHT_SQUARE + 2 * OFFSET_Y] = 1;
-		this->static_board[i][HEIGHT_SQUARE + 2 * OFFSET_Y] = 1;
+		this->board[i][HEIGHT_SQUARE + OFFSET_Y] = 1;
+		this->static_board[i][HEIGHT_SQUARE + OFFSET_Y] = 1;
 	};
 	for (int i = 0; i < HEIGHT_SQUARE + OFFSET_Y; i++) {
 		for (int j = 0; j < OFFSET_X; j++) {
-			this->board[i][j] = 1;
-			this->static_board[i][j] = 1;
-			this->board[i][WIDTH_SQUARE - j - 1];
-			this->static_board[i][WIDTH_SQUARE - j - 1];
+			this->board[j][i] = 1;
+			this->static_board[j][i] = 1;
+			this->board[WIDTH_SQUARE + 2*OFFSET_X - j - 1][i] = 1;
+			this->static_board[WIDTH_SQUARE + 2 * OFFSET_X - j - 1][i] = 1;
 		}
 	}
 	//Board::initMaterial();
@@ -76,11 +76,11 @@ void Board::renderBoard(Block block)
 		}
 	}
 }
-bool Board::isAvailable(int matrix[][4], int board[][HEIGHT_SQUARE + OFFSET_Y + 1], SDL_Point location)
+bool Board::isAvailable(int matrix[][4], int board[][HEIGHT_SQUARE + OFFSET_Y + 1], SDL_Point location, int curr_block)
 {
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			if ((matrix[j][i] != 0) && (board[location.x + OFFSET_X][location.y + OFFSET_Y] != 0)) return false;
+	for (int i = 0; i < LENGTH_EDGE[curr_block]; i++) {
+		for (int j = 0; j < LENGTH_EDGE[curr_block]; j++) {
+			if ((matrix[i][j] != 0) && (board[location.x + j][location.y + i] != 0)) return false;
 		}
 	}
 	return true;
