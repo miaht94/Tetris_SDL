@@ -27,7 +27,7 @@ class Board
 		void drawNet(SDL_Point start_point = { 0,0 });
 
 		// Danger: Must check available before setMatrix because have no checkAvailable in this function
-		void setMatrix(int matrix[][4], int board[][HEIGHT_SQUARE + OFFSET_Y + 1], SDL_Point location,int curr_block);
+		void setMatrix(int matrix[][4], int board[][HEIGHT_SQUARE + OFFSET_Y + 1], SDL_Point location, int curr_block);
 
 		//parram Block block: current Block moving on the board
 		void renderBoard(Block block);

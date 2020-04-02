@@ -29,16 +29,16 @@ Block::~Block()
 	//Do Nothing
 };
 
-void Block::rotate()
+void Block::rotate(int matrix[][4])
 {
 	int temp_matrix[4][4];
-
-	copyMatrix(this->matrix, temp_matrix, LENGTH_EDGE[this->current_block]);
+	if (matrix == NULL) matrix = this->matrix;
+	copyMatrix(matrix, temp_matrix, LENGTH_EDGE[this->current_block]);
 	
 	for (int i = 0; i < LENGTH_EDGE[this->current_block]; i++) {
 		for (int j = 0; j < LENGTH_EDGE[this->current_block]; j++) {
 
-			this->matrix[i][j] = temp_matrix[j][LENGTH_EDGE[this->current_block] - i - 1];
+			matrix[i][j] = temp_matrix[j][LENGTH_EDGE[this->current_block] - i - 1];
 
 		}
 	}

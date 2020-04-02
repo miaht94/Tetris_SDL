@@ -29,7 +29,7 @@ Type 2: (Only I Block)
 	SDL_Point matrix_origin_point = { 0,0 };
 	Block();
 	~Block();
-	void rotate();
+	void rotate(int matrix[][4] = NULL);
 	int Render();
 };
 
