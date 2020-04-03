@@ -1,10 +1,22 @@
 #pragma once
 #include <iostream>
-
+#include <SDL_stdinc.h>
+#include <SDL_scancode.h>
 using namespace std;
+//Length of each square's edge
 const int LENGTH_SQUARE = 30;
+
+//Number of square on board
 const int WIDTH_SQUARE = 15;
 const int HEIGHT_SQUARE = 20;
+
+// TIME HOLDER index of each key
+const int LEFT_ARROW = 0;
+const int UP_ARROW = 1;
+const int DOWN_ARROW = 2;
+const int RIGHT_ARROW = 3;
+
+extern int TIME_HOLDER[4];
 /*
 Type 1:
 	_____________
@@ -38,3 +50,6 @@ const int OFFSET_Y = 4;
 void rotate(int matrix[][4], int n);
 void copyMatrix(int src[][4], int des[][4], int n);
 void copyBoard(int src[][HEIGHT_SQUARE + OFFSET_Y + 1], int des[][HEIGHT_SQUARE + OFFSET_Y + 1]);
+
+//Function to handle key press
+void handle(const Uint8 *current_key_state);

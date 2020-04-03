@@ -7,6 +7,7 @@ using namespace std;
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
 SDL_Event e;
+int TIME_HOLDER[4] = { 0, 0, 0, 0 };
 bool quit = false;
 bool Init() {
 	SDL_Init(SDL_INIT_VIDEO);
@@ -32,8 +33,45 @@ void playGame() {
 				quit = true;
 			}
 		}
-		const Uint8* current_key_state = SDL_GetKeyboardState(NULL);
-		
+		// Handle keyboard press (get how much times player press a key in TIME_HOLDER) 
+		handle(SDL_GetKeyboardState(NULL));
+		if (TIME_HOLDER[UP_ARROW] > 100) {
+			
+			int temp_matrix[4][4];
+			copyMatrix(curr_block.matrix, temp_matrix, LENGTH_EDGE[curr_block.current_block]);
+			curr_block.rotate(temp_matrix);
+
+			if (board.isAvailable(temp_matrix, board.static_board, curr_block.matrix_origin_point, curr_block.current_block)) {
+				curr_block.rotate();
+				TIME_HOLDER[UP_ARROW] = 0;
+			}
+
+		};
+		if (TIME_HOLDER[LEFT_ARROW] > 100) {
+			SDL_Point next_origin_point = { curr_block.matrix_origin_point.x - 1, curr_block.matrix_origin_point.y };
+			if (board.isAvailable(curr_block.matrix, board.static_board, next_origin_point, curr_block.current_block)) {
+				curr_block.matrix_origin_point = next_origin_point;
+				TIME_HOLDER[LEFT_ARROW] = 0;
+			};
+
+		};
+		if (TIME_HOLDER[RIGHT_ARROW] > 100) {
+			SDL_Point next_origin_point = { curr_block.matrix_origin_point.x + 1, curr_block.matrix_origin_point.y };
+			if (board.isAvailable(curr_block.matrix, board.static_board, next_origin_point, curr_block.current_block)) {
+				curr_block.matrix_origin_point = next_origin_point;
+				TIME_HOLDER[RIGHT_ARROW] = 0;
+			};
+
+		};
+		if (TIME_HOLDER[DOWN_ARROW] > 100) {
+			SDL_Point next_origin_point = { curr_block.matrix_origin_point.x, curr_block.matrix_origin_point.y + 1 };
+			if (board.isAvailable(curr_block.matrix, board.static_board, next_origin_point, curr_block.current_block)) {
+				curr_block.matrix_origin_point = next_origin_point;
+				TIME_HOLDER[DOWN_ARROW] = 0;
+			};
+
+		};
+		/*
 		if (current_key_state[SDL_SCANCODE_UP]) {
 			int temp_matrix[4][4];
 			copyMatrix(curr_block.matrix, temp_matrix, LENGTH_EDGE[curr_block.current_block]);
@@ -46,7 +84,7 @@ void playGame() {
 				}
 			}
 
-		};
+		};*/
 		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 		SDL_RenderClear(gRenderer);
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
