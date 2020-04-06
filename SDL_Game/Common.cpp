@@ -13,10 +13,10 @@ void copyMatrix(int src[][4], int des[][4], int n) {
 		}
 	}
 }
-void copyBoard(int** src, int des[][HEIGHT_SQUARE + OFFSET_Y + 1])
+void copyBoard(int** src, int des[][WIDTH_SQUARE + 2 * OFFSET_X])
 {
-	for (int i = 0; i < WIDTH_SQUARE+OFFSET_X; i++) {
-		for (int j = 0; j < HEIGHT_SQUARE+2*OFFSET_Y; j++) {
+	for (int i = 0; i < HEIGHT_SQUARE + OFFSET_Y + 1; i++) {
+		for (int j = 0; j < WIDTH_SQUARE + 2*OFFSET_X; j++) {
 
 			des[i][j] = src[i][j];
 

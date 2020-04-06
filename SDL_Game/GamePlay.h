@@ -12,7 +12,7 @@ bool quit = false;
 bool Init() {
 	SDL_Init(SDL_INIT_VIDEO);
 	srand(time(NULL));
-	gWindow = SDL_CreateWindow("Game SDL", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH_SQUARE * LENGTH_SQUARE + 30, HEIGHT_SQUARE * LENGTH_SQUARE + 30, SDL_WINDOW_SHOWN);
+	gWindow = SDL_CreateWindow("Game SDL", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH_SQUARE * LENGTH_SQUARE , HEIGHT_SQUARE * LENGTH_SQUARE , SDL_WINDOW_SHOWN);
 	if (gWindow == NULL) {
 		cerr << SDL_GetError;
 		return false;
@@ -20,7 +20,7 @@ bool Init() {
 	else return true;
 };
 void playGame() {
-	gRenderer = SDL_CreateRenderer(gWindow, -1, NULL);
+	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 	SDL_RenderSetViewport(gRenderer, &BOARD_VIEWPORT);
 	Board board(gRenderer);
 	Block curr_block;
@@ -83,6 +83,7 @@ void playGame() {
 			}
 			else {
 				board.setMatrix(curr_block.matrix, board.static_board, curr_block.matrix_origin_point, curr_block.current_block);
+				board.checkGainPoint();
 				Block next_block;
 				curr_block = next_block;
 			}

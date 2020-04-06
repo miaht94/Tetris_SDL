@@ -54,7 +54,7 @@ const int OFFSET_Y = 4;
 // Function for process Block
 void rotate(int matrix[][4], int n);
 void copyMatrix(int src[][4], int des[][4], int n);
-void copyBoard(int** src, int des[][HEIGHT_SQUARE + OFFSET_Y + 1]);
+void copyBoard(int** src, int des[][WIDTH_SQUARE + 2 * OFFSET_X]);
 
 //Function to handle key press
 void handle(const Uint8 *current_key_state);

@@ -12,11 +12,11 @@ class Board
 		const int height_square = HEIGHT_SQUARE;
 
 		//array for background processing
-		int board[WIDTH_SQUARE + 2*OFFSET_X][HEIGHT_SQUARE + OFFSET_Y + 1] = { {0} };
+		int board[HEIGHT_SQUARE + OFFSET_Y + 1][WIDTH_SQUARE + 2 * OFFSET_X] = { {0} };
 
 		//array for rendering what player can see
 		//static board will be update whenever block finished its fall
-		int** static_board = new int*[WIDTH_SQUARE + 2 * OFFSET_X];
+		int** static_board = new int*[HEIGHT_SQUARE + OFFSET_Y + 1];
 
 		View* pieces = new View[6];
 
@@ -27,7 +27,7 @@ class Board
 		void drawNet(SDL_Point start_point = { 0,0 });
 
 		// Danger: Must check available before setMatrix because have no checkAvailable in this function
-		void setMatrix(int matrix[][4], int board[][HEIGHT_SQUARE + OFFSET_Y + 1], SDL_Point location, int curr_block);
+		void setMatrix(int matrix[][4], int board[][WIDTH_SQUARE + 2 * OFFSET_X], SDL_Point location, int curr_block);
 
 		// Danger: Must check available before setMatrix because have no checkAvailable in this function
 		void setMatrix(int matrix[][4], int** board, SDL_Point location, int curr_block);

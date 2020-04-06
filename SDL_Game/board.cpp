@@ -2,24 +2,24 @@
 Board::Board(SDL_Renderer* renderer)
 {
 	Board::setRenderer(renderer);
-	for (int i = 0; i < WIDTH_SQUARE + 2 * OFFSET_X; i++) {
-		(this->static_board)[i] = new int[HEIGHT_SQUARE + OFFSET_Y + 1];
+	for (int i = 0; i < HEIGHT_SQUARE + OFFSET_Y + 1; i++) {
+		(this->static_board)[i] = new int[WIDTH_SQUARE + 2 * OFFSET_X];
 	};
-	for (int i = 0; i < WIDTH_SQUARE + 2 * OFFSET_X; i++) {
-		for (int j = 0; j < HEIGHT_SQUARE + OFFSET_Y + 1; j++) {
+	for (int i = 0; i < HEIGHT_SQUARE + OFFSET_Y + 1; i++) {
+		for (int j = 0; j < WIDTH_SQUARE + 2 * OFFSET_X; j++) {
 			(this->static_board)[i][j] = 0;
 		}
 	};
 	for (int i = 0; i < WIDTH_SQUARE + 2 * OFFSET_X; i++) {
-		this->board[i][HEIGHT_SQUARE + OFFSET_Y] = 1;
-		this->static_board[i][HEIGHT_SQUARE + OFFSET_Y] = 1;
+		this->board[HEIGHT_SQUARE + OFFSET_Y][i] = 1;
+		this->static_board[HEIGHT_SQUARE + OFFSET_Y][i] = 1;
 	};
 	for (int i = 0; i < HEIGHT_SQUARE + OFFSET_Y; i++) {
 		for (int j = 0; j < OFFSET_X; j++) {
-			this->board[j][i] = 1;
-			this->static_board[j][i] = 1;
-			this->board[WIDTH_SQUARE + 2*OFFSET_X - j - 1][i] = 1;
-			this->static_board[WIDTH_SQUARE + 2 * OFFSET_X - j - 1][i] = 1;
+			this->board[i][j] = 1;
+			this->static_board[i][j] = 1;
+			this->board[i][WIDTH_SQUARE + 2 * OFFSET_X - j - 1] = 1;
+			this->static_board[i][WIDTH_SQUARE + 2 * OFFSET_X - j - 1] = 1;
 		}
 	}
 	//Board::initMaterial();
@@ -68,13 +68,13 @@ void Board::drawNet(SDL_Point start_point)
 	}
 }
 // Danger: Must check available before setMatrix because have no checkAvailable in this function
-void Board::setMatrix(int matrix[][4], int board[][HEIGHT_SQUARE + OFFSET_Y + 1], SDL_Point location, int curr_block)
+void Board::setMatrix(int matrix[][4], int board[][WIDTH_SQUARE + 2 * OFFSET_X], SDL_Point location, int curr_block)
 {
 	for (int i = 0; i < LENGTH_EDGE[curr_block]; i++) {
 		for (int j = 0; j < LENGTH_EDGE[curr_block]; j++) {
 			// Direcion of board opposite with matrix =)))
 			// It's my fault but i'm so lazy to fix
-			if (matrix[i][j] != 0) board[j+location.x][i+location.y] = matrix[i][j]; //Dangerous !!!
+			if (matrix[i][j] != 0) board[i + location.y][j + location.x] = matrix[i][j]; //Dangerous !!!
 		}
 	}
 }
@@ -84,9 +84,8 @@ void Board::setMatrix(int matrix[][4], int** board, SDL_Point location, int curr
 {
 	for (int i = 0; i < LENGTH_EDGE[curr_block]; i++) {
 		for (int j = 0; j < LENGTH_EDGE[curr_block]; j++) {
-			// Direcion of board opposite with matrix =)))
-			// It's my fault but i'm so lazy to fix
-			if (matrix[i][j] != 0) board[j + location.x][i + location.y] = matrix[i][j]; //Dangerous !!!
+			if (matrix[i][j] != 0) 
+				board[i + location.y][j + location.x] = matrix[i][j]; //Dangerous !!!
 		}
 	}
 }
@@ -95,12 +94,12 @@ void Board::renderBoard(Block block)
 	SDL_Point curr_block_location = block.matrix_origin_point;
 	copyBoard(this->static_board, this->board);
 	Board::setMatrix(block.matrix, this->board,curr_block_location,block.current_block);
-	for (int i = 0; i < WIDTH_SQUARE; i++) {
-		for (int j = 0; j < HEIGHT_SQUARE; j++) {
-			if (this->board[i + OFFSET_X][j + OFFSET_Y]!=0) {
-				SDL_Rect des = { i * LENGTH_SQUARE + 1,j * LENGTH_SQUARE + 1,LENGTH_SQUARE - 2,LENGTH_SQUARE - 2 };
+	for (int j = 0; j < WIDTH_SQUARE; j++) {
+		for (int i = 0; i < HEIGHT_SQUARE; i++) {
+			if (this->board[i + OFFSET_Y][j + OFFSET_X]!=0) {
+				SDL_Rect des = { j * LENGTH_SQUARE + 1,i * LENGTH_SQUARE + 1,LENGTH_SQUARE - 2,LENGTH_SQUARE - 2 };
 				//SDL_RenderFillRect(this->renderer, &des);
-				SDL_RenderCopy(this->renderer, (this->pieces)[this->board[i + OFFSET_X][j + OFFSET_Y]].texture, (this->pieces)[this->board[i + OFFSET_X][j + OFFSET_Y]].clip, &des);
+				SDL_RenderCopy(this->renderer, (this->pieces)[this->board[i + OFFSET_Y][j + OFFSET_X]].texture, (this->pieces)[this->board[i + OFFSET_Y][j + OFFSET_X]].clip, &des);
 			}
 		}
 	}
@@ -108,22 +107,42 @@ void Board::renderBoard(Block block)
 void Board::checkGainPoint()
 {
 	for (int i = 0; i < HEIGHT_SQUARE; i++) {
-		bool full_filled = false;
+		bool full_filled = true;
 		for (int j = 0; j < WIDTH_SQUARE; j++) {
-			if (this->static_board[j][i] == 0) full_filled = false;
+			if (this->static_board[i + OFFSET_Y][j + OFFSET_X] == 0) full_filled = false;
 		};
 		if (full_filled) {
-			for (int k = i; k >= 0; k--) {
+			/*delete[](this->static_board[i + OFFSET_Y]);
+			for (int k = i; k > OFFSET_Y; k--) {
+				(this->static_board)[k + OFFSET_Y] = (this->static_board)[k + OFFSET_Y - 1];
+			};
+			(this->static_board[OFFSET_Y]) = new int[WIDTH_SQUARE + 2 * OFFSET_X];
+			for (int k = 0; k < OFFSET_X; k++) {
 
+				(this->static_board)[OFFSET_Y][k] = 1;
+				(this->static_board)[OFFSET_Y][WIDTH_SQUARE + 2 * OFFSET_X - k - 1] = 1;
+			};
+			for (int k = 0; k < WIDTH_SQUARE; k++) {
+				(this->static_board)[OFFSET_Y][k + OFFSET_X] = 0;
+			}*/
+			for (int k = i + OFFSET_Y; k > OFFSET_Y; k--) {
+				for (int l = 0; l < WIDTH_SQUARE + 2 * OFFSET_X; l++) {
+					this->static_board[k][l] = this->static_board[k - 1][l];
+				}
 			}
+			for (int l = 0; l < WIDTH_SQUARE; l++) {
+				this->static_board[OFFSET_Y][l + OFFSET_X] = 0;
+			}
+			i--;
 		}
+		
 	}
 }
 bool Board::isAvailable(int matrix[][4], int** board, SDL_Point location, int curr_block)
 {
 	for (int i = 0; i < LENGTH_EDGE[curr_block]; i++) {
 		for (int j = 0; j < LENGTH_EDGE[curr_block]; j++) {
-			if ((matrix[i][j] != 0) && (board[location.x + j][location.y + i] != 0)) return false;
+			if ((matrix[i][j] != 0) && (board[location.y + i][location.x + j] != 0)) return false;
 		}
 	}
 	return true;
