@@ -7,8 +7,9 @@ Block::Block()
 	this->matrix_origin_point.y = 0;
 
 	//Generate random Block for FIGURE
-	int rand_number = rand() % 6;
+	int rand_number = rand() % 7;
 	this->current_block = rand_number;
+	this->current_color = rand() % 5 + 1;
 	int count = 1;
 	int mark = 0;
 	for (int i = 0; i < LENGTH_EDGE[current_block]; i++) {

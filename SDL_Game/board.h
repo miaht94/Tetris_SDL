@@ -18,7 +18,7 @@ class Board
 		//static board will be update whenever block finished its fall
 		int static_board[WIDTH_SQUARE + 2*OFFSET_X][HEIGHT_SQUARE + OFFSET_Y + 1];
 
-		View pieces;
+		View* pieces = new View[6];
 
 		Board(SDL_Renderer* renderer);
 		~Board();
@@ -31,6 +31,10 @@ class Board
 
 		//parram Block block: current Block moving on the board
 		void renderBoard(Block block);
+
+		//void renderBoard(Block block, int time);
+		
+		void checkGainPoint();
 
 		// True if available; False if not
 		bool isAvailable(int matrix[][4], int board[][HEIGHT_SQUARE + OFFSET_Y + 1], SDL_Point location, int curr_block);

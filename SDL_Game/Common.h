@@ -2,6 +2,7 @@
 #include <iostream>
 #include <SDL_stdinc.h>
 #include <SDL_scancode.h>
+#include <SDL_rect.h>
 using namespace std;
 //Length of each square's edge
 const int LENGTH_SQUARE = 30;
@@ -15,6 +16,9 @@ const int LEFT_ARROW = 0;
 const int UP_ARROW = 1;
 const int DOWN_ARROW = 2;
 const int RIGHT_ARROW = 3;
+
+//Renderer Viewport
+const SDL_Rect BOARD_VIEWPORT = { 0, 0, WIDTH_SQUARE * LENGTH_SQUARE, HEIGHT_SQUARE * LENGTH_SQUARE };
 
 extern int TIME_HOLDER[4];
 /*
@@ -31,16 +35,17 @@ Type 2: (Only I Block)
 	|__9__|_10__|_11__|_12__|
 	|_13__|_14__|_15__|_16__|
 */
-const int FIGURE[6][4] = {
+const int FIGURE[7][4] = {
 							{5,  6,  7,   8}, // S
 							{4,  5,  8,   9}, // Z
 							{2,  6, 10,  14}, // I
 							{2,  5,  8,   9}, // L
 							{2,  5,  7,   8}, // _|
 							{4,  5,  6,   8}, // T 
+							{6,  7,  10, 11} // O
 };
 // EDGE'S LENGTH of each matrix's FIGURE (2 type : 3x3 (almost block) , 4x4 (only I block)) 
-const int LENGTH_EDGE[6] = { 3, 3, 4, 3, 3, 3 };
+const int LENGTH_EDGE[7] = { 3, 3, 4, 3, 3, 3, 4 };
 // Because Board exceed 4 square on TOP to render block at starting point
 // to access the player_board[x][y] must access board[OFFSET_X + x][OFFSET_Y + y] 
 const int OFFSET_X = 2;
