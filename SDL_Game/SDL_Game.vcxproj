@@ -140,6 +140,9 @@
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="View.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="README.MD" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
