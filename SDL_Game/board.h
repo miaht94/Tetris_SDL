@@ -16,7 +16,7 @@ class Board
 
 		//array for rendering what player can see
 		//static board will be update whenever block finished its fall
-		int static_board[WIDTH_SQUARE + 2*OFFSET_X][HEIGHT_SQUARE + OFFSET_Y + 1];
+		int** static_board = new int*[WIDTH_SQUARE + 2 * OFFSET_X];
 
 		View* pieces = new View[6];
 
@@ -29,6 +29,9 @@ class Board
 		// Danger: Must check available before setMatrix because have no checkAvailable in this function
 		void setMatrix(int matrix[][4], int board[][HEIGHT_SQUARE + OFFSET_Y + 1], SDL_Point location, int curr_block);
 
+		// Danger: Must check available before setMatrix because have no checkAvailable in this function
+		void setMatrix(int matrix[][4], int** board, SDL_Point location, int curr_block);
+
 		//parram Block block: current Block moving on the board
 		void renderBoard(Block block);
 
@@ -37,5 +40,5 @@ class Board
 		void checkGainPoint();
 
 		// True if available; False if not
-		bool isAvailable(int matrix[][4], int board[][HEIGHT_SQUARE + OFFSET_Y + 1], SDL_Point location, int curr_block);
+		bool isAvailable(int matrix[][4], int** board, SDL_Point location, int curr_block);
 };
