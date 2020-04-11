@@ -1,33 +1,64 @@
 #pragma once
 #include <iostream>
+#include <string>
 #include "Board.h"
 #include "Common.h"
 
 using namespace std;
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL; // Game's renderer 
-SDL_Event e;						
+SDL_Event e;
+TTF_Font* font = NULL;
 int TIME_HOLDER[4] = { 0, 0, 0, 0 };
 bool quit = false;
 bool Init() {
+	bool success = true;
 	SDL_Init(SDL_INIT_VIDEO);
+	
+	//Initialize PNG loading
+	int imgFlags = IMG_INIT_PNG;
+	if (!(IMG_Init(imgFlags) & imgFlags))
+	{
+		cerr << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << endl;
+		success = false;
+	};
+
+	//Initialize SDL_ttf
+	if (TTF_Init() == -1)
+	{
+		cerr << "SDL_ttf could not initialize! SDL_ttf Error: " << TTF_GetError() << endl;
+		success = false;
+	};
+
 	srand(time(NULL));
-	gWindow = SDL_CreateWindow("Game SDL", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH_SQUARE * LENGTH_SQUARE , HEIGHT_SQUARE * LENGTH_SQUARE , SDL_WINDOW_SHOWN);
-	if (gWindow == NULL) {
-		cerr << SDL_GetError;
-		return false;
+	font = TTF_OpenFont("Fonts/eurof55.ttf", FONT_SIZE);
+	if (font == NULL) {
+		cerr << "TTF Error: " << TTF_GetError() << endl;
+		success = false;
 	}
-	else return true;
+	gWindow = SDL_CreateWindow("Game SDL", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, BOARD_VIEWPORT.w + SCORE_VIEWPORT.w , BOARD_VIEWPORT.h , SDL_WINDOW_SHOWN);
+	if (gWindow == NULL) {
+		cerr << SDL_GetError();
+		success = false;
+	}
+	return success;
 };
 void playGame() {
 	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
-	SDL_RenderSetViewport(gRenderer, &BOARD_VIEWPORT);
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
 	Board board(gRenderer);
 	Block curr_block;
-	curr_block.matrix_origin_point.x = 8;
-	curr_block.matrix_origin_point.y = 8;
+	//curr_block.matrix_origin_point.x = 8;
+	//curr_block.matrix_origin_point.y = 8;
 	Uint32 prev_time = 0;
+	long curr_point = 0;
+	TextView score_text(font, FONT_SIZE);
+	score_text.origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+	score_text.setRenderer(gRenderer);
+	SDL_Color score_color = { 0,0,0 };
+	score_text.makeTextTexture("Score : \n0", 36, score_color);
 	while (!quit) {
+		std::string score = "Score : \n";
 		while (SDL_PollEvent(&e) != 0) {
 			if (e.type == SDL_QUIT) {
 				quit = true;
@@ -74,6 +105,7 @@ void playGame() {
 		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 		SDL_RenderClear(gRenderer);
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+
 		board.drawNet();
 		Uint32 curr_time = SDL_GetTicks();
 		if (curr_time - prev_time >= 1000) {
@@ -83,14 +115,19 @@ void playGame() {
 			}
 			else {
 				board.setMatrix(curr_block.matrix, board.static_board, curr_block.matrix_origin_point, curr_block.current_block);
-				board.checkGainPoint();
+				long curr_turn_point = board.checkGainPoint();
 				Block next_block;
 				curr_block = next_block;
+				curr_point += curr_turn_point;
+				if (curr_turn_point != 0) {
+					score += to_string(curr_point);
+					score_text.makeTextTexture(score.c_str(), 30, score_color);
+				}
 			}
 			prev_time = curr_time;
-		};
+		};	
 		board.renderBoard(curr_block);
-		
+		score_text.render();
 		SDL_RenderPresent(gRenderer);
 	};
 	SDL_DestroyRenderer(gRenderer);

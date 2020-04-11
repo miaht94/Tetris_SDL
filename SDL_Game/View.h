@@ -1,11 +1,11 @@
 ﻿#include <iostream>
 #include <SDL_image.h>
 #include <SDL.h>
-
+#include <SDL_ttf.h>
 using namespace std;
 class View
 {
-private:
+public:
 
 	string path;
 
@@ -20,10 +20,12 @@ private:
 	int G = 0;
 	int B = 0;
 
-public:
 	SDL_Renderer* renderer = NULL;
 
 	SDL_Texture* texture = NULL;
+
+	// mốc tọa độ để render (Viewport)
+	SDL_Point origin_point = {0, 0};
 
 	//xác định diện tích, tọa độ vùng lấy từ image để đưa vào texture 
 	SDL_Rect* clip = NULL;
@@ -43,7 +45,7 @@ public:
 
 	int setW(int w);
 
-	int setH(int h);
+	int setH(int h);	
 
 	int setRect(SDL_Rect rect);
 
@@ -57,3 +59,10 @@ public:
 	int render();
 };
 
+class TextView : public View {
+public:
+	TTF_Font* font = NULL;
+	int font_size;
+	TextView(TTF_Font* tFont, int font_size);
+	bool makeTextTexture(const char* text, int size, SDL_Color color);
+};

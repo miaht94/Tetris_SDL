@@ -17,9 +17,12 @@ const int UP_ARROW = 1;
 const int DOWN_ARROW = 2;
 const int RIGHT_ARROW = 3;
 
+//Text Config
+const int FONT_SIZE = 36;
+
 //Renderer Viewport
 const SDL_Rect BOARD_VIEWPORT = { 0, 0, WIDTH_SQUARE * LENGTH_SQUARE, HEIGHT_SQUARE * LENGTH_SQUARE };
-
+const SDL_Rect SCORE_VIEWPORT = { WIDTH_SQUARE * LENGTH_SQUARE, 0, 150, HEIGHT_SQUARE * LENGTH_SQUARE };
 extern int TIME_HOLDER[4];
 /*
 Type 1:
@@ -44,7 +47,7 @@ const int FIGURE[7][4] = {
 							{4,  5,  6,   8}, // T 
 							{6,  7,  10, 11} // O
 };
-// EDGE'S LENGTH of each matrix's FIGURE (2 type : 3x3 (almost block) , 4x4 (only I block)) 
+// EDGE'S LENGTH of each matrix's FIGURE (2 type : 3x3 (almost block) , 4x4 (only I and O block)) 
 const int LENGTH_EDGE[7] = { 3, 3, 4, 3, 3, 3, 4 };
 // Because Board exceed 4 square on TOP to render block at starting point
 // to access the player_board[x][y] must access board[OFFSET_X + x][OFFSET_Y + y] 

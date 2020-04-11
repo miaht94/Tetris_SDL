@@ -37,7 +37,7 @@ class Board
 
 		//void renderBoard(Block block, int time);
 		
-		void checkGainPoint();
+		long checkGainPoint();
 
 		// True if available; False if not
 		bool isAvailable(int matrix[][4], int** board, SDL_Point location, int curr_block);

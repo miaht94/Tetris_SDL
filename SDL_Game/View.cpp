@@ -83,7 +83,7 @@ int View::clipImage(int x, int y ,int width, int height) {
 int View::render() {
 	if (this->texture == NULL) cerr << "Please load texture for View" << endl;
 	if (this->renderer == NULL) cerr << "Please load renderer for View" << endl;
-	SDL_Rect rect_des = { this->x_render, this->y_render, this->width_render, this->height_render };
+	SDL_Rect rect_des = { this->x_render + origin_point.x, this->y_render + origin_point.y, this->width_render, this->height_render };
 	SDL_RenderCopy(this->renderer, texture, this->clip, &rect_des);
 	return 1;
 
@@ -117,4 +117,39 @@ bool View::loadTexture(string path, bool have_color_key) {
 		return false;
 
 };
+
+TextView::TextView(TTF_Font* tFont, int font_size)
+{
+	this->font_size = font_size;
+	this->font = tFont;
+}
+
+bool TextView::makeTextTexture(const char* text, int size, SDL_Color color)
+{
+	if (this->texture != NULL) {
+		SDL_DestroyTexture(this->texture);
+		this->texture = NULL;
+	}
+	SDL_Surface* temp_surface = TTF_RenderText_Blended(this->font, text, color);
+	if (temp_surface == NULL) {
+		cerr << "Unable to make Text Surface, TTF_Error : " << TTF_GetError();
+		return false;
+	}
+	else {
+		double ratio = double(size) / double(this->font_size);
+		this->width_render = double(temp_surface->w) * ratio;
+		this->height_render = double(temp_surface->h) * ratio;
+		if (this->texture != NULL) {
+			cout << "TextView texture pointer isn't NULL to make Texture" << endl;
+			return false;
+		};
+		this->texture = SDL_CreateTextureFromSurface(this->renderer, temp_surface);
+		if (this->texture == NULL) {
+			cout << "Create Texture from surface error : " << SDL_GetError() << endl;
+			return false;
+		};
+		SDL_FreeSurface(temp_surface);
+	}
+	return true;
+}
 

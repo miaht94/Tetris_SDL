@@ -104,14 +104,16 @@ void Board::renderBoard(Block block)
 		}
 	}
 }
-void Board::checkGainPoint()
+long Board::checkGainPoint()
 {
+	long score_gained = 0;
 	for (int i = 0; i < HEIGHT_SQUARE; i++) {
 		bool full_filled = true;
 		for (int j = 0; j < WIDTH_SQUARE; j++) {
 			if (this->static_board[i + OFFSET_Y][j + OFFSET_X] == 0) full_filled = false;
 		};
 		if (full_filled) {
+
 			/*delete[](this->static_board[i + OFFSET_Y]);
 			for (int k = i; k > OFFSET_Y; k--) {
 				(this->static_board)[k + OFFSET_Y] = (this->static_board)[k + OFFSET_Y - 1];
@@ -125,6 +127,7 @@ void Board::checkGainPoint()
 			for (int k = 0; k < WIDTH_SQUARE; k++) {
 				(this->static_board)[OFFSET_Y][k + OFFSET_X] = 0;
 			}*/
+			score_gained += 100;
 			for (int k = i + OFFSET_Y; k > OFFSET_Y; k--) {
 				for (int l = 0; l < WIDTH_SQUARE + 2 * OFFSET_X; l++) {
 					this->static_board[k][l] = this->static_board[k - 1][l];
@@ -135,8 +138,9 @@ void Board::checkGainPoint()
 			}
 			i--;
 		}
-		
-	}
+
+	};
+	return score_gained;
 }
 bool Board::isAvailable(int matrix[][4], int** board, SDL_Point location, int curr_block)
 {
