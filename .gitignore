@@ -338,3 +338,9 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+#User Ignore
+*.dll
+/SDL2-2.0.10
+/SDL2_ttf-2.0.15
+/SDL2_image-2.0.5
