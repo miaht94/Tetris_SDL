@@ -3,14 +3,19 @@
 #include <string>
 #include "Board.h"
 #include "Common.h"
-
+#include <vector>
 using namespace std;
+
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL; // Game's renderer 
 SDL_Event e;
 TTF_Font* font = NULL;
+SDL_Color score_color = { 209, 100, 85 };
+TextView score_text(font, FONT_SIZE);
+vector<TextView> text;
 int TIME_HOLDER[4] = { 0, 0, 0, 0 };
 bool quit = false;
+
 bool Init() {
 	bool success = true;
 	SDL_Init(SDL_INIT_VIDEO);
@@ -36,32 +41,40 @@ bool Init() {
 		cerr << "TTF Error: " << TTF_GetError() << endl;
 		success = false;
 	}
-	gWindow = SDL_CreateWindow("Game SDL", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, BOARD_VIEWPORT.w + SCORE_VIEWPORT.w , BOARD_VIEWPORT.h , SDL_WINDOW_SHOWN);
+	gWindow = SDL_CreateWindow("Game SDL", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH , SCREEN_HEIGHT , SDL_WINDOW_SHOWN);
 	if (gWindow == NULL) {
 		cerr << SDL_GetError();
 		success = false;
 	}
 	return success;
 };
-void playGame() {
+void configPrePlay() {
+
 	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
-	Board board(gRenderer);
-	Block curr_block;
-	//curr_block.matrix_origin_point.x = 8;
-	//curr_block.matrix_origin_point.y = 8;
-	Uint32 prev_time = 0;
-	long curr_point = 0;
-	TextView score_text(font, FONT_SIZE);
+
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+
+	score_text = TextView(font, FONT_SIZE);
+
 	//set origin point 
 	score_text.origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
 	score_text.setRenderer(gRenderer);
 
-	//set text color
-	SDL_Color score_color = { 0,0,0 };
-
 	//set default text
-	score_text.makeTextTexture("Score : 0", 36, score_color);
+	score_text.makeTextTexture("Score", 36, score_color);
+
+	//add to vector 
+	text.push_back(score_text);
+}
+void playGame() {
+	
+	configPrePlay();
+	Board board(gRenderer);
+	Block curr_block;
+	Uint32 prev_time = 0;
+	long curr_point = 0;
+
+	//Main Loop
 	while (!quit) {
 		std::string score = "Score : ";
 		while (SDL_PollEvent(&e) != 0) {
@@ -109,7 +122,6 @@ void playGame() {
 		};
 		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 		SDL_RenderClear(gRenderer);
-		//board.drawNet();
 		Uint32 curr_time = SDL_GetTicks();
 		if (curr_time - prev_time >= 1000) {
 			SDL_Point next_point = { curr_block.matrix_origin_point.x,curr_block.matrix_origin_point.y + 1 };

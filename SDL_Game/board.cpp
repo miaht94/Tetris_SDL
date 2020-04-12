@@ -51,22 +51,6 @@ void Board::setRenderer(SDL_Renderer* renderer)
 	(this->pieces)[5].renderer = this->renderer;
 	Board::initMaterial();
 };
-void Board::drawNet(SDL_Point start_point)
-{
-	if (this->renderer == NULL) cerr << "Please set Renderer for Board"; else {
-		for (int i = 0; i < this->width_square; i++) {
-
-			for (int j = 0; j < this->height_square; j++) {
-
-				//SDL_SetRenderDrawColor(this->renderer, 100, 100, 100, 100);
-				SDL_Rect temp_rect = { i * LENGTH_SQUARE + 1, j * LENGTH_SQUARE + 1, LENGTH_SQUARE - 2, LENGTH_SQUARE - 2 };
-				//SDL_RenderDrawRect(this->renderer, &temp_rect);
-				SDL_RenderCopy(this->renderer, (this->pieces)[0].texture, (this->pieces)[0].clip, &temp_rect);
-			}
-
-		}
-	}
-}
 // Danger: Must check available before setMatrix because have no checkAvailable in this function
 void Board::setMatrix(int matrix[][4], int board[][WIDTH_SQUARE + 2 * OFFSET_X], SDL_Point location, int curr_block)
 {
@@ -97,7 +81,7 @@ void Board::renderBoard(Block block)
 	for (int j = 0; j < WIDTH_SQUARE; j++) {
 		for (int i = 0; i < HEIGHT_SQUARE; i++) {
 
-				SDL_Rect des = { j * LENGTH_SQUARE + 1,i * LENGTH_SQUARE + 1,LENGTH_SQUARE - 2,LENGTH_SQUARE - 2 };
+				SDL_Rect des = {this->origin_point.x + j * LENGTH_SQUARE + 1,this->origin_point.y + i * LENGTH_SQUARE + 1,LENGTH_SQUARE - 2,LENGTH_SQUARE - 2 };
 				//SDL_RenderFillRect(this->renderer, &des);
 				SDL_RenderCopy(this->renderer, (this->pieces)[this->board[i + OFFSET_Y][j + OFFSET_X]].texture, (this->pieces)[this->board[i + OFFSET_Y][j + OFFSET_X]].clip, &des);
 			

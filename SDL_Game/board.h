@@ -11,6 +11,7 @@ class Board
 		const int width_square = WIDTH_SQUARE;
 		const int height_square = HEIGHT_SQUARE;
 
+		SDL_Point origin_point = { BOARD_VIEWPORT.x, BOARD_VIEWPORT.y };
 		//array for background processing
 		int board[HEIGHT_SQUARE + OFFSET_Y + 1][WIDTH_SQUARE + 2 * OFFSET_X] = { {0} };
 
@@ -24,7 +25,6 @@ class Board
 		~Board();
 		void initMaterial();
 		void setRenderer(SDL_Renderer* renderer);
-		void drawNet(SDL_Point start_point = { 0,0 });
 
 		// Danger: Must check available before setMatrix because have no checkAvailable in this function
 		void setMatrix(int matrix[][4], int board[][WIDTH_SQUARE + 2 * OFFSET_X], SDL_Point location, int curr_block);

@@ -21,9 +21,15 @@ const int RIGHT_ARROW = 3;
 const int FONT_SIZE = 36;
 
 //Renderer Viewport
-const SDL_Rect BOARD_VIEWPORT = { 0, 0, WIDTH_SQUARE * LENGTH_SQUARE, HEIGHT_SQUARE * LENGTH_SQUARE };
-const SDL_Rect SCORE_VIEWPORT = { WIDTH_SQUARE * LENGTH_SQUARE, 0, 150, HEIGHT_SQUARE * LENGTH_SQUARE };
+const SDL_Rect SCORE_VIEWPORT = { 0, 0, WIDTH_SQUARE * LENGTH_SQUARE, 70 };
+const SDL_Rect BOARD_VIEWPORT = { 0, SCORE_VIEWPORT.h, WIDTH_SQUARE * LENGTH_SQUARE, HEIGHT_SQUARE * LENGTH_SQUARE };
+
 extern int TIME_HOLDER[4];
+
+//Window Config
+const int SCREEN_WIDTH = BOARD_VIEWPORT.w;
+const int SCREEN_HEIGHT = BOARD_VIEWPORT.h + SCORE_VIEWPORT.h;
+
 /*
 Type 1:
 	_____________
@@ -31,7 +37,7 @@ Type 1:
 	|_4_|_5_|_6_|
 	|_7_|_8_|_9_|
 
-Type 2: (Only I Block)
+Type 2: (Only I and O Block)
 	_________________________
 	|__1__|__2__|__3__|__4__|
 	|__5__|__6__|__7__|__8__|
