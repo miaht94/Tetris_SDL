@@ -15,6 +15,16 @@ public:
 	int width_render  = 0;
 	int height_render = 0;
 
+	//Xử lí animation
+		Uint32 start_time = NULL;
+		string animation;
+		Uint32 duration = NULL;
+		//Các biến backup đưa view về ban đầu sau animation
+		int x_render_backup = 0;
+		int y_render_backup = 0;
+		int width_render_backup = 0;
+		int height_render_backup = 0;
+
 	//Key color RGB
 	int R = 0;
 	int G = 0;
@@ -55,6 +65,12 @@ public:
 	bool loadTexture(string path, bool have_color_key = false);
 
 	int clipImage(int x, int y, int width, int height);
+
+	bool animate(string animation);
+
+	void update();
+
+	void setAnimation(string animation, Uint32 duration);
 
 	int render();
 };

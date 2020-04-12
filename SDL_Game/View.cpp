@@ -78,11 +78,54 @@ int View::clipImage(int x, int y ,int width, int height) {
 	this->clip = &temp_rect;
 	return 1;
 
-};
+}
+bool View::animate(string animation)
+{
+	if (animation == "Scale Up") {
+		double ratio_scale = 1.5;
+		SDL_Point center_point;
+		if (this->start_time == NULL) {
+			this->start_time = SDL_GetTicks();
+			this->x_render_backup = this->x_render;
+			this->y_render_backup = this->y_render;
+			this->width_render_backup = this->width_render;
+			this->height_render_backup = this->height_render;
+		}
+		center_point = { (this->x_render_backup + this->width_render_backup) / 2, (this->y_render_backup + this->height_render_backup) / 2 };
+		Uint32 time_offset = SDL_GetTicks() - this->start_time;
+		if (time_offset > this->duration) return false;
+		ratio_scale = ratio_scale - double(time_offset) / double(duration) * ratio_scale + 1;
+		this->width_render = double(this->width_render_backup) * ratio_scale;
+		this->height_render = double(this->height_render_backup) * ratio_scale;
+		this->x_render = center_point.x - this->width_render / 2;
+		this->y_render = center_point.y - this->height_render / 2;
+	}
+	return true;
+}
+void View::update()
+{
+	if (!View::animate(this->animation)) {
+		this->animation = "";
+		this->start_time = NULL;
+		this->duration = NULL;
+		this->x_render_backup = 0;
+		this->y_render_backup = 0;
+		this->width_render_backup = 0;
+		this->height_render_backup = 0;
+	}
+}
+;
+
+void View::setAnimation(string animation, Uint32 duration)
+{
+	this->animation = animation;
+	this->duration = duration;
+}
 
 int View::render() {
 	if (this->texture == NULL) cerr << "Please load texture for View" << endl;
 	if (this->renderer == NULL) cerr << "Please load renderer for View" << endl;
+	View::update();
 	SDL_Rect rect_des = { this->x_render + origin_point.x, this->y_render + origin_point.y, this->width_render, this->height_render };
 	SDL_RenderCopy(this->renderer, texture, this->clip, &rect_des);
 	return 1;

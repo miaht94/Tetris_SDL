@@ -96,11 +96,11 @@ void Board::renderBoard(Block block)
 	Board::setMatrix(block.matrix, this->board,curr_block_location,block.current_block);
 	for (int j = 0; j < WIDTH_SQUARE; j++) {
 		for (int i = 0; i < HEIGHT_SQUARE; i++) {
-			if (this->board[i + OFFSET_Y][j + OFFSET_X]!=0) {
+
 				SDL_Rect des = { j * LENGTH_SQUARE + 1,i * LENGTH_SQUARE + 1,LENGTH_SQUARE - 2,LENGTH_SQUARE - 2 };
 				//SDL_RenderFillRect(this->renderer, &des);
 				SDL_RenderCopy(this->renderer, (this->pieces)[this->board[i + OFFSET_Y][j + OFFSET_X]].texture, (this->pieces)[this->board[i + OFFSET_Y][j + OFFSET_X]].clip, &des);
-			}
+			
 		}
 	}
 }

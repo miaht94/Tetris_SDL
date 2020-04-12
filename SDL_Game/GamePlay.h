@@ -53,12 +53,17 @@ void playGame() {
 	Uint32 prev_time = 0;
 	long curr_point = 0;
 	TextView score_text(font, FONT_SIZE);
+	//set origin point 
 	score_text.origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
 	score_text.setRenderer(gRenderer);
+
+	//set text color
 	SDL_Color score_color = { 0,0,0 };
-	score_text.makeTextTexture("Score : \n0", 36, score_color);
+
+	//set default text
+	score_text.makeTextTexture("Score : 0", 36, score_color);
 	while (!quit) {
-		std::string score = "Score : \n";
+		std::string score = "Score : ";
 		while (SDL_PollEvent(&e) != 0) {
 			if (e.type == SDL_QUIT) {
 				quit = true;
@@ -104,9 +109,7 @@ void playGame() {
 		};
 		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 		SDL_RenderClear(gRenderer);
-		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
-
-		board.drawNet();
+		//board.drawNet();
 		Uint32 curr_time = SDL_GetTicks();
 		if (curr_time - prev_time >= 1000) {
 			SDL_Point next_point = { curr_block.matrix_origin_point.x,curr_block.matrix_origin_point.y + 1 };
@@ -122,10 +125,11 @@ void playGame() {
 				if (curr_turn_point != 0) {
 					score += to_string(curr_point);
 					score_text.makeTextTexture(score.c_str(), 30, score_color);
+					score_text.setAnimation("Scale Up", 200);
 				}
 			}
 			prev_time = curr_time;
-		};	
+		};
 		board.renderBoard(curr_block);
 		score_text.render();
 		SDL_RenderPresent(gRenderer);
