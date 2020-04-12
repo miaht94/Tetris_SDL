@@ -18,6 +18,7 @@ bool quit = false;
 
 bool Init() {
 	bool success = true;
+	srand(time(NULL));
 	SDL_Init(SDL_INIT_VIDEO);
 	
 	//Initialize PNG loading
@@ -34,14 +35,14 @@ bool Init() {
 		cerr << "SDL_ttf could not initialize! SDL_ttf Error: " << TTF_GetError() << endl;
 		success = false;
 	};
-
-	srand(time(NULL));
+	
 	font = TTF_OpenFont("Fonts/eurof55.ttf", FONT_SIZE);
 	if (font == NULL) {
 		cerr << "TTF Error: " << TTF_GetError() << endl;
 		success = false;
 	}
 	gWindow = SDL_CreateWindow("Game SDL", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH , SCREEN_HEIGHT , SDL_WINDOW_SHOWN);
+	
 	if (gWindow == NULL) {
 		cerr << SDL_GetError();
 		success = false;
@@ -54,35 +55,36 @@ void configPrePlay() {
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
-	arr_textview[SCORE_TEXT] = TextView(font, FONT_SIZE);
-	arr_textview[SCORE_NUMBER] = TextView(font, FONT_SIZE);
-	arr_textview[HIGH_SCORE_TEXT] = TextView(font, FONT_SIZE);
-	arr_textview[HIGH_SCORE_NUMBER] = TextView(font, FONT_SIZE);
+	arr_textview[SCORE_TEXT]						= TextView(font, FONT_SIZE);
+	arr_textview[SCORE_NUMBER]						= TextView(font, FONT_SIZE);
+	arr_textview[HIGH_SCORE_TEXT]					= TextView(font, FONT_SIZE);
+	arr_textview[HIGH_SCORE_NUMBER]					= TextView(font, FONT_SIZE);
+
 	//set origin point 
-	arr_textview[SCORE_TEXT].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
-	arr_textview[SCORE_NUMBER].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
-	arr_textview[HIGH_SCORE_TEXT].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
-	arr_textview[HIGH_SCORE_NUMBER].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+	arr_textview[SCORE_TEXT].origin_point			= { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+	arr_textview[SCORE_NUMBER].origin_point			= { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+	arr_textview[HIGH_SCORE_TEXT].origin_point		= { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+	arr_textview[HIGH_SCORE_NUMBER].origin_point	= { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
 
 	//set Renderer
-	arr_textview[HIGH_SCORE_TEXT].setRenderer(gRenderer);
-	arr_textview[HIGH_SCORE_NUMBER].setRenderer(gRenderer);
-	arr_textview[SCORE_TEXT].setRenderer(gRenderer);
-	arr_textview[SCORE_NUMBER].setRenderer(gRenderer);
+	arr_textview[HIGH_SCORE_TEXT]	.setRenderer(gRenderer);
+	arr_textview[HIGH_SCORE_NUMBER]	.setRenderer(gRenderer);
+	arr_textview[SCORE_TEXT]		.setRenderer(gRenderer);
+	arr_textview[SCORE_NUMBER]		.setRenderer(gRenderer);
 
 	//set default text
-	arr_textview[SCORE_TEXT].makeTextTexture("Score", 36, score_color);
-	arr_textview[SCORE_NUMBER].makeTextTexture("0", 36, score_color);
-	arr_textview[HIGH_SCORE_TEXT].makeTextTexture("High Score", 36, score_color);
-	arr_textview[HIGH_SCORE_NUMBER].makeTextTexture("0", 36, score_color);
+	arr_textview[SCORE_TEXT]		.makeTextTexture("Score", 36, score_color);
+	arr_textview[SCORE_NUMBER]		.makeTextTexture("0", 36, score_color);
+	arr_textview[HIGH_SCORE_TEXT]	.makeTextTexture("High Score", 36, score_color);
+	arr_textview[HIGH_SCORE_NUMBER]	.makeTextTexture("0", 36, score_color);
 
 	//score_number.y_render = 10;
 
 	//add coordinate render for score number
-	arr_textview[SCORE_TEXT].setCenterPoint({ 60,17 });
-	arr_textview[SCORE_NUMBER].setCenterPoint({ 60,48 });
-	arr_textview[HIGH_SCORE_TEXT].setCenterPoint({ 360,17 });
-	arr_textview[HIGH_SCORE_NUMBER].setCenterPoint({ 360,48 });
+	arr_textview[SCORE_TEXT]		.setCenterPoint({ 60,17 });
+	arr_textview[SCORE_NUMBER]		.setCenterPoint({ 60,48 });
+	arr_textview[HIGH_SCORE_TEXT]	.setCenterPoint({ 360,17 });
+	arr_textview[HIGH_SCORE_NUMBER]	.setCenterPoint({ 360,48 });
 
 }
 void playGame() {
@@ -92,18 +94,20 @@ void playGame() {
 	Block curr_block;
 	Uint32 prev_time = 0;
 	long curr_score = 0;
-
+	bool game_over = false;
 	//Main Loop
-	while (!quit) {
+	while (!quit && !game_over) {
 		std::string score = "";
 		while (SDL_PollEvent(&e) != 0) {
 			if (e.type == SDL_QUIT) {
 				quit = true;
 			}
 		}
+
 		// Handle keyboard press (get how much times player press a key in TIME_HOLDER) 
 		handle(SDL_GetKeyboardState(NULL));
-		if (TIME_HOLDER[UP_ARROW] > 60) {
+
+		if (TIME_HOLDER[UP_ARROW]	> 60) {
 			
 			int temp_matrix[4][4];
 			copyMatrix(curr_block.matrix, temp_matrix, LENGTH_EDGE[curr_block.current_block]);
@@ -123,7 +127,7 @@ void playGame() {
 			};
 
 		};
-		if (TIME_HOLDER[RIGHT_ARROW] > 60) {
+		if (TIME_HOLDER[RIGHT_ARROW]> 60) {
 			SDL_Point next_origin_point = { curr_block.matrix_origin_point.x + 1, curr_block.matrix_origin_point.y };
 			if (board.isAvailable(curr_block.matrix, board.static_board, next_origin_point, curr_block.current_block)) {
 				curr_block.matrix_origin_point = next_origin_point;
@@ -149,6 +153,8 @@ void playGame() {
 			}
 			else {
 				board.setMatrix(curr_block.matrix, board.static_board, curr_block.matrix_origin_point, curr_block.current_block);
+				game_over = board.isGameOver();
+				(game_over) ? cout << "Game Over" << endl : cout << "";
 				long curr_turn_point = board.checkGainPoint();
 				Block next_block;
 				curr_block = next_block;

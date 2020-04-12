@@ -135,4 +135,11 @@ bool Board::isAvailable(int matrix[][4], int** board, SDL_Point location, int cu
 	}
 	return true;
 }
+bool Board::isGameOver()
+{
+	for (int i = 0; i < WIDTH_SQUARE; i++) {
+		if (static_board[OFFSET_Y - 1][OFFSET_X + i] != 0) return true;
+	};
+	return false;
+}
 ;
