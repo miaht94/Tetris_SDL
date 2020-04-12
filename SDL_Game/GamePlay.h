@@ -11,9 +11,9 @@ SDL_Renderer* gRenderer = NULL; // Game's renderer
 SDL_Event e;
 TTF_Font* font = NULL;
 SDL_Color score_color = { 209, 100, 85 };
-TextView score_text(font, FONT_SIZE);
-vector<TextView> text;
+TextView arr_textview[NUMBER_ELEMENT_TEXTVIEW];
 int TIME_HOLDER[4] = { 0, 0, 0, 0 };
+extern long curr_high_score;
 bool quit = false;
 
 bool Init() {
@@ -54,17 +54,36 @@ void configPrePlay() {
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
-	score_text = TextView(font, FONT_SIZE);
-
+	arr_textview[SCORE_TEXT] = TextView(font, FONT_SIZE);
+	arr_textview[SCORE_NUMBER] = TextView(font, FONT_SIZE);
+	arr_textview[HIGH_SCORE_TEXT] = TextView(font, FONT_SIZE);
+	arr_textview[HIGH_SCORE_NUMBER] = TextView(font, FONT_SIZE);
 	//set origin point 
-	score_text.origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
-	score_text.setRenderer(gRenderer);
+	arr_textview[SCORE_TEXT].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+	arr_textview[SCORE_NUMBER].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+	arr_textview[HIGH_SCORE_TEXT].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+	arr_textview[HIGH_SCORE_NUMBER].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+
+	//set Renderer
+	arr_textview[HIGH_SCORE_TEXT].setRenderer(gRenderer);
+	arr_textview[HIGH_SCORE_NUMBER].setRenderer(gRenderer);
+	arr_textview[SCORE_TEXT].setRenderer(gRenderer);
+	arr_textview[SCORE_NUMBER].setRenderer(gRenderer);
 
 	//set default text
-	score_text.makeTextTexture("Score", 36, score_color);
+	arr_textview[SCORE_TEXT].makeTextTexture("Score", 36, score_color);
+	arr_textview[SCORE_NUMBER].makeTextTexture("0", 36, score_color);
+	arr_textview[HIGH_SCORE_TEXT].makeTextTexture("High Score", 36, score_color);
+	arr_textview[HIGH_SCORE_NUMBER].makeTextTexture("0", 36, score_color);
 
-	//add to vector 
-	text.push_back(score_text);
+	//score_number.y_render = 10;
+
+	//add coordinate render for score number
+	arr_textview[SCORE_TEXT].setCenterPoint({ 60,17 });
+	arr_textview[SCORE_NUMBER].setCenterPoint({ 60,48 });
+	arr_textview[HIGH_SCORE_TEXT].setCenterPoint({ 360,17 });
+	arr_textview[HIGH_SCORE_NUMBER].setCenterPoint({ 360,48 });
+
 }
 void playGame() {
 	
@@ -72,11 +91,11 @@ void playGame() {
 	Board board(gRenderer);
 	Block curr_block;
 	Uint32 prev_time = 0;
-	long curr_point = 0;
+	long curr_score = 0;
 
 	//Main Loop
 	while (!quit) {
-		std::string score = "Score : ";
+		std::string score = "";
 		while (SDL_PollEvent(&e) != 0) {
 			if (e.type == SDL_QUIT) {
 				quit = true;
@@ -133,17 +152,24 @@ void playGame() {
 				long curr_turn_point = board.checkGainPoint();
 				Block next_block;
 				curr_block = next_block;
-				curr_point += curr_turn_point;
+				curr_score += curr_turn_point;
 				if (curr_turn_point != 0) {
-					score += to_string(curr_point);
-					score_text.makeTextTexture(score.c_str(), 30, score_color);
-					score_text.setAnimation("Scale Up", 200);
+					score += to_string(curr_score);
+					arr_textview[SCORE_NUMBER].makeTextTexture(score.c_str(), 36, score_color);
+					arr_textview[SCORE_NUMBER].setAnimation("Scale Up", 200);
+				}
+				if (curr_high_score < curr_score) {
+					curr_high_score = curr_score;
+					arr_textview[HIGH_SCORE_NUMBER].makeTextTexture(to_string(curr_high_score).c_str(), 36, score_color);
+					arr_textview[HIGH_SCORE_NUMBER].setAnimation("Scale Up", 500);
 				}
 			}
 			prev_time = curr_time;
 		};
 		board.renderBoard(curr_block);
-		score_text.render();
+		for (int i = 0; i < NUMBER_ELEMENT_TEXTVIEW; i++) {
+			arr_textview[i].render(true);
+		};
 		SDL_RenderPresent(gRenderer);
 	};
 	SDL_DestroyRenderer(gRenderer);

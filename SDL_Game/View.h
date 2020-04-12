@@ -14,6 +14,7 @@ public:
 	int y_render      = 0;
 	int width_render  = 0;
 	int height_render = 0;
+	SDL_Point center_point_render = { 0,0 };
 
 	//Xử lí animation
 		Uint32 start_time = NULL;
@@ -59,6 +60,8 @@ public:
 
 	int setRect(SDL_Rect rect);
 
+	int setCenterPoint(SDL_Point center_point);
+
 	int setRenderer(SDL_Renderer* renderer);
 
 	//Function return false when Texture = NULL
@@ -79,6 +82,8 @@ class TextView : public View {
 public:
 	TTF_Font* font = NULL;
 	int font_size;
+	TextView();
 	TextView(TTF_Font* tFont, int font_size);
 	bool makeTextTexture(const char* text, int size, SDL_Color color);
+	void render(bool render_with_center_point = false);
 };

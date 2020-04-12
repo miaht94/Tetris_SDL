@@ -30,6 +30,13 @@ extern int TIME_HOLDER[4];
 const int SCREEN_WIDTH = BOARD_VIEWPORT.w;
 const int SCREEN_HEIGHT = BOARD_VIEWPORT.h + SCORE_VIEWPORT.h;
 
+//TextView Index in arr_textview
+const int NUMBER_ELEMENT_TEXTVIEW	= 4;
+const int SCORE_TEXT				= 0;
+const int SCORE_NUMBER				= 1;
+const int HIGH_SCORE_TEXT			= 2;
+const int HIGH_SCORE_NUMBER			= 3;
+
 /*
 Type 1:
 	_____________

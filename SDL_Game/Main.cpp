@@ -5,7 +5,7 @@
 #include "GamePlay.h"
 using namespace std;
 
-
+long curr_high_score = 0;
 
 int main(int agrc, char* argv[]) {
 	

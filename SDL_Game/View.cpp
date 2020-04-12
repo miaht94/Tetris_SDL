@@ -65,6 +65,15 @@ int View::setRect(SDL_Rect rect)
 	return 1;
 }
 
+int View::setCenterPoint(SDL_Point center_point) 
+{
+	this->center_point_render.x = center_point.x;
+	this->center_point_render.y = center_point.y;
+	this->x_render = center_point.x - this->width_render/2;
+	this->y_render = center_point.y - this->height_render/2;
+	return 0;
+}
+
 int View::setRenderer(SDL_Renderer* renderer) {
 
 	this->renderer = renderer;
@@ -91,7 +100,7 @@ bool View::animate(string animation)
 			this->width_render_backup = this->width_render;
 			this->height_render_backup = this->height_render;
 		}
-		center_point = { (this->x_render_backup + this->width_render_backup) / 2, (this->y_render_backup + this->height_render_backup) / 2 };
+		center_point = this->center_point_render;
 		Uint32 time_offset = SDL_GetTicks() - this->start_time;
 		if (time_offset > this->duration) return false;
 		ratio_scale = ratio_scale - double(time_offset) / double(duration) * ratio_scale + 1;
@@ -153,6 +162,7 @@ bool View::loadTexture(string path, bool have_color_key) {
 	if (this->texture != NULL) {
 
 		SDL_QueryTexture(this->texture, NULL, NULL, &(this->width_render), &(this->height_render));
+		this->center_point_render = { this->width_render / 2, this->height_render / 2 };
 		return true;
 
 	}
@@ -160,6 +170,10 @@ bool View::loadTexture(string path, bool have_color_key) {
 		return false;
 
 };
+
+TextView::TextView()
+{
+}
 
 TextView::TextView(TTF_Font* tFont, int font_size)
 {
@@ -182,6 +196,7 @@ bool TextView::makeTextTexture(const char* text, int size, SDL_Color color)
 		double ratio = double(size) / double(this->font_size);
 		this->width_render = double(temp_surface->w) * ratio;
 		this->height_render = double(temp_surface->h) * ratio;
+		//this->center_point_render = {this->origin_point.x + this->width_render / 2,this->origin_point.y + this->height_render / 2 };
 		if (this->texture != NULL) {
 			cout << "TextView texture pointer isn't NULL to make Texture" << endl;
 			return false;
@@ -194,5 +209,14 @@ bool TextView::makeTextTexture(const char* text, int size, SDL_Color color)
 		SDL_FreeSurface(temp_surface);
 	}
 	return true;
+}
+
+void TextView::render(bool render_with_center_point)
+{
+	if ((this->center_point_render.x != 0 || this->center_point_render.y != 0) && render_with_center_point) {
+		this->x_render = this->center_point_render.x - this->width_render/2;
+		this->y_render = this->center_point_render.y - this->height_render/2;
+	}
+	View::render();
 }
 
