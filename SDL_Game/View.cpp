@@ -139,7 +139,7 @@ int View::render() {
 	SDL_RenderCopy(this->renderer, texture, this->clip, &rect_des);
 	return 1;
 
-};
+}
 
 //Function return false when Texture = NULL
 bool View::loadTexture(string path, bool have_color_key) {
@@ -159,10 +159,10 @@ bool View::loadTexture(string path, bool have_color_key) {
 
 	};
 
-	if (this->texture != NULL) {
+	if (this->texture != NULL && this->width_render == 0 && this->height_render == 0) {
 
 		SDL_QueryTexture(this->texture, NULL, NULL, &(this->width_render), &(this->height_render));
-		this->center_point_render = { this->width_render / 2, this->height_render / 2 };
+		//this->center_point_render = { this->width_render / 2, this->height_render / 2 };
 		return true;
 
 	}
@@ -220,3 +220,81 @@ void TextView::render(bool render_with_center_point)
 	View::render();
 }
 
+Button::Button()
+{
+}
+
+void Button::loadTexture(string on_mouse_over, string on_mouse_out)
+{
+
+	View::loadTexture(on_mouse_over);
+	this->button_texture["Mouse Over"] = this->texture;
+	this->button_texture["Mouse Down"] = this->texture;
+	this->button_texture["Mouse Up"] = this->texture;
+
+
+	View::loadTexture(on_mouse_out);
+	this->button_texture["Mouse Out"] = this->texture;
+
+}
+void Button::handleMouseEvent(SDL_Event* e)
+{
+	bool inside = true;
+	if (e->type == SDL_MOUSEMOTION || e->type == SDL_MOUSEBUTTONUP || e->type == SDL_MOUSEBUTTONDOWN) {
+		SDL_Point MOUSE_POSITION;
+		SDL_GetMouseState(&MOUSE_POSITION.x, &MOUSE_POSITION.y);
+		if (MOUSE_POSITION.x < this->x_render + this->origin_point.x)
+		{
+			inside = false;
+		}
+		//Mouse is right of the button
+		else if (MOUSE_POSITION.x > this->x_render + this->width_render)
+		{
+			inside = false;
+		}
+		//Mouse above the button
+		else if (MOUSE_POSITION.y < this->y_render)
+		{
+			inside = false;
+		}
+		//Mouse below the button
+		else if (MOUSE_POSITION.y > this->y_render + this->height_render)
+		{
+			inside = false;
+		}
+
+	}
+	if (!inside) this->cur_status = "Mouse Out";
+	else {
+		switch (e->type)
+		{
+		case SDL_MOUSEMOTION:
+			this->cur_status = "Mouse Over";
+			break;
+
+		case SDL_MOUSEBUTTONDOWN:
+			this->cur_status = "Mouse Down";
+			break;
+
+		case SDL_MOUSEBUTTONUP:
+			this->cur_status = "Mouse Up";
+			break;
+		}
+	}
+}
+void Button::update()
+{
+	if (pre_status != cur_status) {
+		pre_status = cur_status;
+		this->texture = button_texture[cur_status];
+	};
+}
+void Button::render(bool render_with_center_point)
+{
+	Button::update();
+	if ((this->center_point_render.x != 0 || this->center_point_render.y != 0) && render_with_center_point) {
+		this->x_render = this->center_point_render.x - this->width_render / 2;
+		this->y_render = this->center_point_render.y - this->height_render / 2;
+	}
+	View::render();
+};

@@ -44,8 +44,3 @@ void Block::rotate(int matrix[][4])
 		}
 	}
 }
-
-int Block::Render()
-{
-	return 0;
-}

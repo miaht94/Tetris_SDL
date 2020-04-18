@@ -12,6 +12,7 @@ SDL_Event e;
 TTF_Font* font = NULL;
 SDL_Color score_color = { 209, 100, 85 };
 TextView arr_textview[NUMBER_ELEMENT_TEXTVIEW];
+Button arr_button[NUMBER_ELEMENT_BUTTON];
 int TIME_HOLDER[4] = { 0, 0, 0, 0 };
 extern long curr_high_score;
 bool quit = false;
@@ -55,37 +56,61 @@ void configPrePlay() {
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
-	arr_textview[SCORE_TEXT]						= TextView(font, FONT_SIZE);
-	arr_textview[SCORE_NUMBER]						= TextView(font, FONT_SIZE);
-	arr_textview[HIGH_SCORE_TEXT]					= TextView(font, FONT_SIZE);
-	arr_textview[HIGH_SCORE_NUMBER]					= TextView(font, FONT_SIZE);
+	arr_textview[SCORE_TEXT] = TextView(font, FONT_SIZE);
+	arr_textview[SCORE_NUMBER] = TextView(font, FONT_SIZE);
+	arr_textview[HIGH_SCORE_TEXT] = TextView(font, FONT_SIZE);
+	arr_textview[HIGH_SCORE_NUMBER] = TextView(font, FONT_SIZE);
 
 	//set origin point 
-	arr_textview[SCORE_TEXT].origin_point			= { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
-	arr_textview[SCORE_NUMBER].origin_point			= { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
-	arr_textview[HIGH_SCORE_TEXT].origin_point		= { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
-	arr_textview[HIGH_SCORE_NUMBER].origin_point	= { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+	arr_textview[SCORE_TEXT].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+	arr_textview[SCORE_NUMBER].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+	arr_textview[HIGH_SCORE_TEXT].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+	arr_textview[HIGH_SCORE_NUMBER].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
 
 	//set Renderer
-	arr_textview[HIGH_SCORE_TEXT]	.setRenderer(gRenderer);
-	arr_textview[HIGH_SCORE_NUMBER]	.setRenderer(gRenderer);
-	arr_textview[SCORE_TEXT]		.setRenderer(gRenderer);
-	arr_textview[SCORE_NUMBER]		.setRenderer(gRenderer);
+	arr_textview[HIGH_SCORE_TEXT].setRenderer(gRenderer);
+	arr_textview[HIGH_SCORE_NUMBER].setRenderer(gRenderer);
+	arr_textview[SCORE_TEXT].setRenderer(gRenderer);
+	arr_textview[SCORE_NUMBER].setRenderer(gRenderer);
 
 	//set default text
-	arr_textview[SCORE_TEXT]		.makeTextTexture("Score", 36, score_color);
-	arr_textview[SCORE_NUMBER]		.makeTextTexture("0", 36, score_color);
-	arr_textview[HIGH_SCORE_TEXT]	.makeTextTexture("High Score", 36, score_color);
-	arr_textview[HIGH_SCORE_NUMBER]	.makeTextTexture("0", 36, score_color);
-
-	//score_number.y_render = 10;
+	arr_textview[SCORE_TEXT].makeTextTexture("Score", 36, score_color);
+	arr_textview[SCORE_NUMBER].makeTextTexture("0", 36, score_color);
+	arr_textview[HIGH_SCORE_TEXT].makeTextTexture("High Score", 36, score_color);
+	arr_textview[HIGH_SCORE_NUMBER].makeTextTexture("0", 36, score_color);
 
 	//add coordinate render for score number
-	arr_textview[SCORE_TEXT]		.setCenterPoint({ 60,17 });
-	arr_textview[SCORE_NUMBER]		.setCenterPoint({ 60,48 });
-	arr_textview[HIGH_SCORE_TEXT]	.setCenterPoint({ 360,17 });
-	arr_textview[HIGH_SCORE_NUMBER]	.setCenterPoint({ 360,48 });
+	arr_textview[SCORE_TEXT].setCenterPoint({ 60,17 });
+	arr_textview[SCORE_NUMBER].setCenterPoint({ 60,48 });
+	arr_textview[HIGH_SCORE_TEXT].setCenterPoint({ 360,17 });
+	arr_textview[HIGH_SCORE_NUMBER].setCenterPoint({ 360,48 });
 
+//_______________________________________________________________________________________________//
+	
+	//config button
+	arr_button[PAUSE_BUTTON] = Button();
+
+	//set Origin point
+	arr_button[PAUSE_BUTTON].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+
+	//set center point render
+	arr_button[PAUSE_BUTTON].setCenterPoint({ 100,100 });
+
+	//set height width for button
+	arr_button[PAUSE_BUTTON].width_render = 90;
+	arr_button[PAUSE_BUTTON].height_render = 90;
+
+	//set Renderer
+	arr_button[PAUSE_BUTTON].renderer = gRenderer;
+
+	//load texture for button
+	arr_button[PAUSE_BUTTON].loadTexture("textures/play_but_lighter.png", "textures/play_but.png");
+
+};
+void pauseGame() {
+	while (true) {
+		
+	}
 }
 void playGame() {
 	
@@ -106,7 +131,15 @@ void playGame() {
 
 		// Handle keyboard press (get how much times player press a key in TIME_HOLDER) 
 		handle(SDL_GetKeyboardState(NULL));
+		for (int i = 0; i < 1; i++) {
+			arr_button[i].handleMouseEvent(&e);
+		};
 
+		//Handle button on click
+
+		if (arr_button[PAUSE_BUTTON].cur_status == "Mouse Down") pauseGame();
+
+		//Handle movement block when player press arrow keyboard
 		if (TIME_HOLDER[UP_ARROW]	> 60) {
 			
 			int temp_matrix[4][4];
@@ -175,6 +208,10 @@ void playGame() {
 		board.renderBoard(curr_block);
 		for (int i = 0; i < NUMBER_ELEMENT_TEXTVIEW; i++) {
 			arr_textview[i].render(true);
+		};
+
+		for (int i = 0; i < 1; i++) {
+			arr_button[i].render(true);
 		};
 		SDL_RenderPresent(gRenderer);
 	};

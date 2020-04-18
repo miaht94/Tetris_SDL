@@ -1,7 +1,9 @@
-﻿#include <iostream>
+﻿#pragma once
+#include <iostream>
 #include <SDL_image.h>
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <map>
 using namespace std;
 class View
 {
@@ -76,6 +78,8 @@ public:
 	void setAnimation(string animation, Uint32 duration);
 
 	int render();
+
+	void handleMouseEvent(SDL_Event* e);
 };
 
 class TextView : public View {
@@ -86,4 +90,18 @@ public:
 	TextView(TTF_Font* tFont, int font_size);
 	bool makeTextTexture(const char* text, int size, SDL_Color color);
 	void render(bool render_with_center_point = false);
+};
+
+
+class Button : public View {
+public:
+	std::map<string, SDL_Texture*> button_texture;
+	string cur_status = "Mouse Out";
+	string pre_status = "";
+	Button();
+	void loadTexture(string on_mouse_over, string on_mouse_out);
+	void handleMouseEvent(SDL_Event* e);
+	void update();
+	void render(bool render_with_center_point = false);
+
 };

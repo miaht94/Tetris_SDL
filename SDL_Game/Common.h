@@ -37,6 +37,10 @@ const int SCORE_NUMBER				= 1;
 const int HIGH_SCORE_TEXT			= 2;
 const int HIGH_SCORE_NUMBER			= 3;
 
+//Button index in arr_button
+const int NUMBER_ELEMENT_BUTTON = 2;
+const int PAUSE_BUTTON = 0;
+
 /*
 Type 1:
 	_____________

@@ -30,6 +30,5 @@ Type 2: (Only I Block)
 	Block();
 	~Block();
 	void rotate(int matrix[][4] = NULL);
-	int Render();
 };
 
