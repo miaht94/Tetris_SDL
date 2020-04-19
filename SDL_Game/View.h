@@ -77,7 +77,7 @@ public:
 
 	void setAnimation(string animation, Uint32 duration);
 
-	int render();
+	int render(bool render_with_center_point = false);
 
 	void handleMouseEvent(SDL_Event* e);
 };
@@ -99,6 +99,7 @@ public:
 	string cur_status = "Mouse Out";
 	string pre_status = "";
 	Button();
+	~Button();
 	void loadTexture(string on_mouse_over, string on_mouse_out);
 	void handleMouseEvent(SDL_Event* e);
 	void update();

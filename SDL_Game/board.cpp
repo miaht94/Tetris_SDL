@@ -1,7 +1,5 @@
 #include "Board.h"
-Board::Board(SDL_Renderer* renderer)
-{
-	Board::setRenderer(renderer);
+Board::Board() {
 	for (int i = 0; i < HEIGHT_SQUARE + OFFSET_Y + 1; i++) {
 		(this->static_board)[i] = new int[WIDTH_SQUARE + 2 * OFFSET_X];
 	};
@@ -22,6 +20,10 @@ Board::Board(SDL_Renderer* renderer)
 			this->static_board[i][WIDTH_SQUARE + 2 * OFFSET_X - j - 1] = 1;
 		}
 	}
+}
+Board::Board(SDL_Renderer* renderer)
+{
+	Board::setRenderer(renderer);
 	//Board::initMaterial();
 };
 

@@ -23,7 +23,7 @@ void copyBoard(int** src, int des[][WIDTH_SQUARE + 2 * OFFSET_X])
 		}
 	}
 }
-void handle(const Uint8* current_key_state)
+/*void handle(const Uint8* current_key_state)
 {
 	if (current_key_state[SDL_SCANCODE_LEFT])
 		TIME_HOLDER[LEFT_ARROW]++;
@@ -40,7 +40,7 @@ void handle(const Uint8* current_key_state)
 	if (current_key_state[SDL_SCANCODE_RIGHT])
 		TIME_HOLDER[RIGHT_ARROW]++;
 	else TIME_HOLDER[RIGHT_ARROW] = 0;
-};
+};*/
 void rotate(int matrix[][4], int n) {
 	int temp_matrix[4][4];
 	copyMatrix(matrix, temp_matrix, n);

@@ -13,7 +13,8 @@ View::View(string path, int x, int y) {
 };
 
 View::~View() {
-	SDL_DestroyTexture(this->texture);
+	if (this->texture != NULL)
+		SDL_DestroyTexture(this->texture);
 }
 
 int View::getX() {
@@ -90,7 +91,7 @@ int View::clipImage(int x, int y ,int width, int height) {
 }
 bool View::animate(string animation)
 {
-	if (animation == "Scale Up") {
+	if (animation.find("Scale Up") != string::npos) {
 		double ratio_scale = 1.5;
 		SDL_Point center_point;
 		if (this->start_time == NULL) {
@@ -108,7 +109,27 @@ bool View::animate(string animation)
 		this->height_render = double(this->height_render_backup) * ratio_scale;
 		this->x_render = center_point.x - this->width_render / 2;
 		this->y_render = center_point.y - this->height_render / 2;
-	}
+	};
+
+	if (animation .find("Appear") != string::npos) {
+		double ratio_scale = 1;
+		SDL_Point center_point;
+		if (this->start_time == NULL) {
+			this->start_time = SDL_GetTicks();
+			this->x_render_backup = this->x_render;
+			this->y_render_backup = this->y_render;
+			this->width_render_backup = this->width_render;
+			this->height_render_backup = this->height_render;
+		}
+		center_point = this->center_point_render;
+		Uint32 time_offset = SDL_GetTicks() - this->start_time;
+		if (time_offset > this->duration) return false;
+		ratio_scale = double(time_offset) / double(duration) * ratio_scale;
+		this->width_render = double(this->width_render_backup) * ratio_scale;
+		this->height_render = double(this->height_render_backup) * ratio_scale;
+		this->x_render = center_point.x - this->width_render / 2;
+		this->y_render = center_point.y - this->height_render / 2;
+	};
 	return true;
 }
 void View::update()
@@ -131,10 +152,14 @@ void View::setAnimation(string animation, Uint32 duration)
 	this->duration = duration;
 }
 
-int View::render() {
+int View::render(bool render_with_center_point) {
 	if (this->texture == NULL) cerr << "Please load texture for View" << endl;
 	if (this->renderer == NULL) cerr << "Please load renderer for View" << endl;
 	View::update();
+	if ((this->center_point_render.x != 0 || this->center_point_render.y != 0) && render_with_center_point) {
+		this->x_render = this->center_point_render.x - this->width_render / 2;
+		this->y_render = this->center_point_render.y - this->height_render / 2;
+	}
 	SDL_Rect rect_des = { this->x_render + origin_point.x, this->y_render + origin_point.y, this->width_render, this->height_render };
 	SDL_RenderCopy(this->renderer, texture, this->clip, &rect_des);
 	return 1;
@@ -222,6 +247,14 @@ void TextView::render(bool render_with_center_point)
 
 Button::Button()
 {
+}
+
+Button::~Button()
+{
+	if (button_texture["Mouse Over"] != NULL) SDL_DestroyTexture(button_texture["Mouse Over"]);
+	if (button_texture["Mouse Down"] != NULL) SDL_DestroyTexture(button_texture["Mouse Down"]);
+	if (button_texture["Mouse Up"] != NULL) SDL_DestroyTexture(button_texture["Mouse Up"]);
+	if (button_texture["Mouse Out"] != NULL) SDL_DestroyTexture(button_texture["Mouse Out"]);
 }
 
 void Button::loadTexture(string on_mouse_over, string on_mouse_out)

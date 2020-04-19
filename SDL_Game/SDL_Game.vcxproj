@@ -139,7 +139,6 @@
     <ClInclude Include="Board.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="GamePlay.h" />
     <ClInclude Include="View.h" />
   </ItemGroup>
   <ItemGroup>

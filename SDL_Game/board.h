@@ -22,6 +22,8 @@ class Board
 
 		View* pieces = new View[6];
 
+		Board();
+
 		Board(SDL_Renderer* renderer);
 		~Board();
 		void initMaterial();
