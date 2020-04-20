@@ -42,9 +42,10 @@ const int NUMBER_ELEMENT_BUTTON = 2;
 const int PAUSE_BUTTON = 0;
 
 // SDL Color 
-const int NUMBER_ELEMENT_COLOR = 2;
+const int NUMBER_ELEMENT_COLOR = 3;
 const int SCORE_COLOR = 0;
 const int HIGH_SCORE_COLOR = 1;
+const int PAUSED_TEXT_COLOR = 2;
 
 //Game Status
 const int GAME_PLAYING = 0;

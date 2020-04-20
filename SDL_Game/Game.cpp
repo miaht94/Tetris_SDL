@@ -71,12 +71,19 @@ void Game::onPause()
 {
 	bool unPause = false;
 	View pauseNotification;
+	TextView paused_text = TextView(this->font, FONT_SIZE);
 	pauseNotification.setRenderer(this->gRenderer);
 	pauseNotification.width_render = 300;
 	pauseNotification.height_render = 300;
 	pauseNotification.loadTexture("textures/but_background_1.png");
 	pauseNotification.setAnimation("Appear", 200);
 	pauseNotification.setCenterPoint({ SCREEN_WIDTH/2,SCREEN_HEIGHT/2 });
+
+	paused_text.setRenderer(this->gRenderer);
+	paused_text.makeTextTexture("GAME PAUSED", FONT_SIZE, color[PAUSED_TEXT_COLOR]);
+	paused_text.x_render = 20;
+	paused_text.y_render = 60;
+	paused_text.setViewBackground(pauseNotification);
 	while (!unPause) {
 		SDL_SetRenderDrawColor(gRenderer,255, 255, 255, 255);
 		SDL_RenderClear(gRenderer);
@@ -85,6 +92,7 @@ void Game::onPause()
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 60);
 		SDL_RenderFillRect(this->gRenderer, &blur_background);
 		pauseNotification.render(true);
+		paused_text.render();
 		SDL_RenderPresent(gRenderer);
 	}
 }

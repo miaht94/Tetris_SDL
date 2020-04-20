@@ -142,6 +142,15 @@ void View::update()
 		this->y_render_backup = 0;
 		this->width_render_backup = 0;
 		this->height_render_backup = 0;
+	};
+	
+	if (this->view_background != NULL) {
+		this->origin_point.x = view_background->origin_point.x + view_background->x_render;
+		this->origin_point.y = view_background->origin_point.y + view_background->y_render;
+		this->x_render = this->view_background->width_render * this->x_relative_ratio;
+		this->y_render = this->view_background->height_render * this->y_relative_ratio;
+		this->width_render = this->view_background->width_render * this->width_relative_ratio;
+		this->height_render = this->view_background->height_render * this->height_relative_ratio;
 	}
 }
 ;
@@ -164,6 +173,23 @@ int View::render(bool render_with_center_point) {
 	SDL_RenderCopy(this->renderer, texture, this->clip, &rect_des);
 	return 1;
 
+}
+
+void View::setViewBackground(const View& background)
+{
+	if (background.renderer == NULL) 
+		cerr << "Invalid Background" << endl;
+	else {
+		
+		this->origin_point.x = background.origin_point.x + background.x_render;
+		this->origin_point.y = background.origin_point.y + background.y_render;
+		this->x_relative_ratio = double(this->x_render) / double(background.width_render);
+		this->y_relative_ratio = double(this->y_render) / double(background.height_render);
+		this->width_relative_ratio = double(this->width_render) / double(background.width_render);
+		this->height_relative_ratio = double(this->height_render) / double(background.height_render);
+		this->view_background = &background;
+
+	}
 }
 
 //Function return false when Texture = NULL

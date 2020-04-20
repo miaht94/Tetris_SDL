@@ -12,6 +12,8 @@ public:
 	string path;
 
 	// Tọa độ, diện tích của View trên màn hình
+	// Đây là tọa độ tương đối so với Viewport
+	// Tọa độ tuyệt đối của View trên màn hình = var_render + origin_point.var;
 	int x_render      = 0;
 	int y_render      = 0;
 	int width_render  = 0;
@@ -27,6 +29,14 @@ public:
 		int y_render_backup = 0;
 		int width_render_backup = 0;
 		int height_render_backup = 0;
+
+	//View Background 
+
+		const View* view_background = NULL;
+		double x_relative_ratio = 0;
+		double y_relative_ratio = 0;
+		double width_relative_ratio = 1;
+		double height_relative_ratio = 1;
 
 	//Key color RGB
 	int R = 0;
@@ -80,6 +90,8 @@ public:
 	int render(bool render_with_center_point = false);
 
 	void handleMouseEvent(SDL_Event* e);
+
+	void setViewBackground(const View& background);
 };
 
 class TextView : public View {
