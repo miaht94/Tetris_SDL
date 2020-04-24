@@ -100,8 +100,9 @@ bool View::animate(string animation)
 			this->y_render_backup = this->y_render;
 			this->width_render_backup = this->width_render;
 			this->height_render_backup = this->height_render;
+			this->center_point_render_backup = this->center_point_render;
 		}
-		center_point = this->center_point_render;
+		center_point = this->center_point_render_backup;
 		Uint32 time_offset = SDL_GetTicks() - this->start_time;
 		if (time_offset > this->duration) return false;
 		ratio_scale = ratio_scale - double(time_offset) / double(duration) * ratio_scale + 1;
@@ -142,6 +143,7 @@ void View::update()
 		this->y_render_backup = 0;
 		this->width_render_backup = 0;
 		this->height_render_backup = 0;
+		this->center_point_render_backup = { 0,0 };
 	};
 	
 	if (this->view_background != NULL) {
@@ -302,28 +304,30 @@ void Button::handleMouseEvent(SDL_Event* e)
 	if (e->type == SDL_MOUSEMOTION || e->type == SDL_MOUSEBUTTONUP || e->type == SDL_MOUSEBUTTONDOWN) {
 		SDL_Point MOUSE_POSITION;
 		SDL_GetMouseState(&MOUSE_POSITION.x, &MOUSE_POSITION.y);
-		if (MOUSE_POSITION.x < this->x_render + this->origin_point.x)
+		cout << MOUSE_POSITION.x << "  -  " << MOUSE_POSITION.y << endl;
+		if (MOUSE_POSITION.x < this->origin_point.x + this->x_render)
 		{
 			inside = false;
 		}
 		//Mouse is right of the button
-		else if (MOUSE_POSITION.x > this->x_render + this->width_render)
+		else if (MOUSE_POSITION.x > this->origin_point.x + this->x_render + this->width_render)
 		{
 			inside = false;
 		}
 		//Mouse above the button
-		else if (MOUSE_POSITION.y < this->y_render)
+		else if (MOUSE_POSITION.y  < this->origin_point.y + this->y_render)
 		{
 			inside = false;
 		}
 		//Mouse below the button
-		else if (MOUSE_POSITION.y > this->y_render + this->height_render)
+		else if (MOUSE_POSITION.y > this->origin_point.y + this->y_render + this->height_render)
 		{
 			inside = false;
 		}
 
 	}
-	if (!inside) this->cur_status = "Mouse Out";
+	if (!inside) 
+		this->cur_status = "Mouse Out";
 	else {
 		switch (e->type)
 		{

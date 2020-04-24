@@ -29,9 +29,9 @@ public:
 		int y_render_backup = 0;
 		int width_render_backup = 0;
 		int height_render_backup = 0;
-
+		SDL_Point center_point_render_backup = { 0,0 };
+	
 	//View Background 
-
 		const View* view_background = NULL;
 		double x_relative_ratio = 0;
 		double y_relative_ratio = 0;

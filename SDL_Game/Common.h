@@ -30,26 +30,34 @@ const SDL_Rect BOARD_VIEWPORT = { 0, SCORE_VIEWPORT.h, WIDTH_SQUARE * LENGTH_SQU
 const int SCREEN_WIDTH = BOARD_VIEWPORT.w;
 const int SCREEN_HEIGHT = BOARD_VIEWPORT.h + SCORE_VIEWPORT.h;
 
-//TextView Index in arr_textview
-const int NUMBER_ELEMENT_TEXTVIEW	= 4;
-const int SCORE_TEXT				= 0;
-const int SCORE_NUMBER				= 1;
-const int HIGH_SCORE_TEXT			= 2;
-const int HIGH_SCORE_NUMBER			= 3;
+//View index in arr_textview
+const int NUMBER_ELEMENT_VIEW	= 1;
+const int NOTIFICATION_VIEW		= 0;
+
+//TextView index in arr_textview
+const int NUMBER_ELEMENT_TEXTVIEW				= 5;
+const int NUMBER_ELEMENT_TEXTVIEW_ON_PLAYING	= 4;
+const int SCORE_TEXT							= 0;
+const int SCORE_NUMBER							= 1;
+const int HIGH_SCORE_TEXT						= 2;
+const int HIGH_SCORE_NUMBER						= 3;
+const int PAUSE_TEXT							= 4;
 
 //Button index in arr_button
-const int NUMBER_ELEMENT_BUTTON = 2;
-const int PAUSE_BUTTON = 0;
+const int NUMBER_ELEMENT_BUTTON				= 2;
+const int NUMBER_ELEMENT_BUTTON_ON_PLAYING	= 1;
+const int PAUSE_BUTTON						= 0;
+const int RESUME_BUTTON						= 1;
 
 // SDL Color 
-const int NUMBER_ELEMENT_COLOR = 3;
-const int SCORE_COLOR = 0;
-const int HIGH_SCORE_COLOR = 1;
-const int PAUSED_TEXT_COLOR = 2;
+const int NUMBER_ELEMENT_COLOR	= 3;
+const int SCORE_COLOR			= 0;
+const int HIGH_SCORE_COLOR		= 1;
+const int PAUSED_TEXT_COLOR		= 2;
 
 //Game Status
-const int GAME_PLAYING = 0;
-const int GAME_PAUSED = 1;
+const int GAME_PLAYING	= 0;
+const int GAME_PAUSED	= 1;
 
 /*
 Type 1:

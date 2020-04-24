@@ -16,7 +16,8 @@ class Game
 		
 		TextView arr_textview[NUMBER_ELEMENT_TEXTVIEW];
 		Button arr_button[NUMBER_ELEMENT_BUTTON];
-		
+		View arr_view[NUMBER_ELEMENT_VIEW];
+
 		int status = GAME_PLAYING;
 
 		int TIME_HOLDER[4] = { 0, 0, 0, 0 };
