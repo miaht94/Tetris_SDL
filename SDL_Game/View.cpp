@@ -4,6 +4,11 @@ View::View() {
 	//do nothing
 };
 
+View::View(SDL_Renderer* gRenderer)
+{
+	this->renderer = gRenderer;
+}
+
 View::View(string path, int x, int y) {
 
 	this->x_render = x;
@@ -75,6 +80,14 @@ int View::setCenterPoint(SDL_Point center_point)
 	return 0;
 }
 
+int View::setKeyColor(SDL_Color key)
+{
+	this->R = key.r;
+	this->G = key.g;
+	this->B = key.b;
+	return 0;
+}
+
 int View::setRenderer(SDL_Renderer* renderer) {
 
 	this->renderer = renderer;
@@ -83,9 +96,11 @@ int View::setRenderer(SDL_Renderer* renderer) {
 };
 
 int View::clipImage(int x, int y ,int width, int height) {
-
-	SDL_Rect temp_rect = { x, y, width, height };
-	this->clip = &temp_rect;
+	this->clip = new SDL_Rect;
+	this->clip->x = x;
+	this->clip->y = y;
+	this->clip->w = width;
+	this->clip->h = height;
 	return 1;
 
 }
@@ -266,10 +281,10 @@ bool TextView::makeTextTexture(const char* text, int size, SDL_Color color)
 
 void TextView::render(bool render_with_center_point)
 {
-	if ((this->center_point_render.x != 0 || this->center_point_render.y != 0) && render_with_center_point) {
+	/*if ((this->center_point_render.x != 0 || this->center_point_render.y != 0) && render_with_center_point) {
 		this->x_render = this->center_point_render.x - this->width_render/2;
 		this->y_render = this->center_point_render.y - this->height_render/2;
-	}
+	}*/
 	View::render();
 }
 
@@ -361,3 +376,36 @@ void Button::render(bool render_with_center_point)
 	}
 	View::render();
 };
+
+Sprite::Sprite(int frames_number, int sheet_rows, int sheet_cols, SDL_Rect frame_rect, int fps)
+{
+	this->frames_number = frames_number;
+	this->sheet_cols = sheet_cols;
+	this->sheet_rows = sheet_rows;
+	this->frame_rect = frame_rect;
+	this->fps = fps;
+}
+
+void Sprite::render()
+{
+	if (this->pre_frame_time == NULL) {
+		this->pre_frame_time = SDL_GetTicks();
+		this->clipImage(this->frame_rect.x, this->frame_rect.y, this->frame_rect.w, this->frame_rect.h);
+	}
+	else {
+		Uint32 curr_time = SDL_GetTicks();
+		if (curr_time - this->pre_frame_time >= 1000 / 40) {
+
+			this->pre_frame_time = curr_time;
+			this->curr_frame = (this->curr_frame + 1) % this->frames_number;
+
+		}
+		
+		int curr_frame_row = this->curr_frame / this->sheet_cols;
+		int curr_frame_col = this->curr_frame % this->sheet_cols;
+		this->clipImage(this->frame_rect.x + this->frame_rect.w * curr_frame_col, 
+						this->frame_rect.y + this->frame_rect.h * curr_frame_row, 
+						this->frame_rect.w,  this->frame_rect.h);
+	}
+	View::render();
+}

@@ -55,6 +55,7 @@ public:
 
 	View();
 
+	View(SDL_Renderer* gRenderer);
 	View(string path, int x = 0, int y = 0);
 
 	~View();
@@ -73,6 +74,8 @@ public:
 	int setRect(SDL_Rect rect);
 
 	int setCenterPoint(SDL_Point center_point);
+
+	int setKeyColor(SDL_Color key);
 
 	int setRenderer(SDL_Renderer* renderer);
 
@@ -117,4 +120,17 @@ public:
 	void update();
 	void render(bool render_with_center_point = false);
 
+};
+
+class Sprite : public View {
+public:
+	int frames_number = 0;
+	int sheet_rows = 0;
+	int sheet_cols = 0;
+	int curr_frame = 0;
+	SDL_Rect frame_rect = { 0,0,0,0 };
+	int fps = 60;
+	Uint32 pre_frame_time = NULL;
+	Sprite(int frames_number, int sheet_rows, int sheet_cols, SDL_Rect frame_rect, int fps = 60);
+	void render();
 };

@@ -20,7 +20,7 @@ class Game
 
 		int status = GAME_PLAYING;
 
-		int TIME_HOLDER[4] = { 0, 0, 0, 0 };
+		int TIME_HOLDER[5] = { 0, 0, 0, 0, 0 };
 		
 		int curr_high_score = 0;
 		int curr_score = 0;
@@ -35,7 +35,7 @@ class Game
 		void playGame();
 		void handleGameStatus();
 		void renderCurrentGame();
-		void handleEvent(const Uint8* current_key_state);
+		void handleEvent(const Uint8* current_key_state, Uint32& prev_time);
 
 };
 

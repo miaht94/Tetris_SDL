@@ -50,10 +50,10 @@ void Game::configResource() {
 		arr_textview[HIGH_SCORE_NUMBER].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
 		
 		arr_textview[PAUSE_TEXT].setCenterPoint({ arr_view[NOTIFICATION_VIEW].width_render / 2, arr_view[NOTIFICATION_VIEW].height_render / 3 });
-		arr_textview[SCORE_TEXT].setCenterPoint({ 60,17 });
-		arr_textview[SCORE_NUMBER].setCenterPoint({ 60,48 });
-		arr_textview[HIGH_SCORE_TEXT].setCenterPoint({ 360,17 });
-		arr_textview[HIGH_SCORE_NUMBER].setCenterPoint({ 360,48 });
+		arr_textview[SCORE_TEXT].setCenterPoint({ 175,20 });
+		arr_textview[SCORE_NUMBER].setCenterPoint({ 175,50 });
+		arr_textview[HIGH_SCORE_TEXT].setCenterPoint({ 175, 180 });
+		arr_textview[HIGH_SCORE_NUMBER].setCenterPoint({ 175,210 });
 
 	//set textview's background
 		arr_textview[PAUSE_TEXT].setViewBackground(arr_view[NOTIFICATION_VIEW]);
@@ -69,15 +69,15 @@ void Game::configResource() {
 	arr_button[RESUME_BUTTON].setRenderer(this->gRenderer);
 
 	//set attribute
-		arr_button[PAUSE_BUTTON].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
-		arr_button[PAUSE_BUTTON].width_render = 90;
-		arr_button[PAUSE_BUTTON].height_render = 90;
+		arr_button[PAUSE_BUTTON].origin_point = { TASK_BAR_VIEWPORT.x, TASK_BAR_VIEWPORT.y };
+		arr_button[PAUSE_BUTTON].width_render = 55;
+		arr_button[PAUSE_BUTTON].height_render = 55;
 
 		arr_button[RESUME_BUTTON].width_render = 60;
 		arr_button[RESUME_BUTTON].height_render = 60;
 
 	//set center point render
-		arr_button[PAUSE_BUTTON].setCenterPoint({ 100,100 });
+		arr_button[PAUSE_BUTTON].setCenterPoint({ 420,30 });
 		arr_button[RESUME_BUTTON].setCenterPoint({ arr_view[NOTIFICATION_VIEW].width_render * 2 / 5,arr_view[NOTIFICATION_VIEW].height_render * 2 / 3 });
 	//load texture for button
 		arr_button[PAUSE_BUTTON].loadTexture("textures/play_but_lighter.png", "textures/play_but.png");
@@ -87,33 +87,27 @@ void Game::configResource() {
 }
 void Game::onGUI()
 {
-
+	Sprite background(110, 11, 10, { 0, 0, 534, 600 });
+	background.setRenderer(this->gRenderer);
+	background.setKeyColor({ 201,44,81 });
+	if (!background.loadTexture("textures/gui_background.png")) {
+		cerr << SDL_GetError() << endl;
+	};
+	background.x_render = 0;
+	background.y_render = 0;
+	background.width_render = SCREEN_WIDTH;
+	background.height_render = SCREEN_HEIGHT;
+	while (true) {
+		SDL_SetRenderDrawColor(this->gRenderer, 255, 255, 255, 255);
+		SDL_RenderClear(this->gRenderer);
+		background.render();
+		SDL_RenderPresent(this->gRenderer);
+	};
 }
 void Game::onPause()
 {
 	bool unPause = false;
 	arr_view[NOTIFICATION_VIEW].setAnimation("Appear", 200);
-	/*View pauseNotification;
-	TextView paused_text = TextView(this->font, FONT_SIZE);
-	pauseNotification.setRenderer(this->gRenderer);
-	pauseNotification.width_render = 310;
-	pauseNotification.height_render = 200;
-	pauseNotification.loadTexture("textures/frame.png");
-	pauseNotification.setAnimation("Appear", 200);
-	pauseNotification.setCenterPoint({ SCREEN_WIDTH/2,SCREEN_HEIGHT/2 });
-
-	paused_text.setRenderer(this->gRenderer);
-	paused_text.makeTextTexture("GAME PAUSED", FONT_SIZE, {255,255,255});
-	paused_text.setCenterPoint({ pauseNotification.width_render / 2, pauseNotification.height_render / 3 });
-	paused_text.setViewBackground(pauseNotification);
-	Button resume_button = Button();
-	resume_button.setRenderer(this->gRenderer);
-	resume_button.loadTexture("textures/play_but_lighter.png", "textures/play_but.png");
-	resume_button.width_render = 60;
-	resume_button.height_render = 60;
-	resume_button.setCenterPoint({ pauseNotification.width_render*2 / 5,pauseNotification.height_render*2 / 3 });
-	resume_button.setViewBackground(pauseNotification);
-	SDL_Event e_pause;*/
 	while (!unPause) {
 		while (SDL_PollEvent(&this->e) != 0) {
 			if (this->e.type == SDL_QUIT) {
@@ -138,6 +132,7 @@ void Game::onPause()
 
 void Game::playGame()
 {
+	cout << SCREEN_WIDTH << "    -    " << SCREEN_HEIGHT << endl;
 	Uint32 prev_time = 0;
 	bool game_over = false;
 	while (!(this->quit) && !game_over) {
@@ -147,7 +142,7 @@ void Game::playGame()
 				this->quit = true;
 			}
 		};
-		Game::handleEvent(SDL_GetKeyboardState(NULL));
+		Game::handleEvent(SDL_GetKeyboardState(NULL), prev_time);
 		Game::handleGameStatus();
 		SDL_SetRenderDrawColor(this->gRenderer, 255, 255, 255, 255);
 		SDL_RenderClear(this->gRenderer);
@@ -207,7 +202,7 @@ void Game::renderCurrentGame() {
 		this->arr_button[i].render(true);
 	};
 }
-void Game::handleEvent(const Uint8* current_key_state)
+void Game::handleEvent(const Uint8* current_key_state, Uint32& prev_time)
 {
 	// Handle Keyboard
 	if (current_key_state[SDL_SCANCODE_LEFT])
@@ -226,6 +221,9 @@ void Game::handleEvent(const Uint8* current_key_state)
 		this->TIME_HOLDER[RIGHT_ARROW]++;
 	else this->TIME_HOLDER[RIGHT_ARROW] = 0;
 
+	if (current_key_state[SDL_SCANCODE_SPACE])
+		this->TIME_HOLDER[SPACE]++;
+	else this->TIME_HOLDER[SPACE] = 0;
 	//Handle Mouse
 	for (int i = 0; i < 1; i++) {
 		this->arr_button[i].handleMouseEvent(&this->e);
@@ -234,6 +232,15 @@ void Game::handleEvent(const Uint8* current_key_state)
 
 	//Process after Player's Event Done
 		// Keyboard
+	if (this->TIME_HOLDER[SPACE] > 1) {
+		SDL_Point next_origin_point = { this->curr_block.matrix_origin_point.x, this->curr_block.matrix_origin_point.y + 1 };
+		if(this->board.isAvailable(this->curr_block.matrix, this->board.static_board, next_origin_point, this->curr_block.current_block)) {
+			this->curr_block.matrix_origin_point = next_origin_point;
+			next_origin_point.y++;
+		};
+		this->TIME_HOLDER[SPACE] = 0;
+		//prev_time -= 1000;
+	};
 	if (this->TIME_HOLDER[UP_ARROW] > 60) {
 		int temp_matrix[4][4];
 		copyMatrix(this->curr_block.matrix, temp_matrix, LENGTH_EDGE[this->curr_block.current_block]);

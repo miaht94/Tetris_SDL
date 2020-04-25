@@ -53,6 +53,7 @@ int main(int agrc, char* argv[]) {
 	
 	if (Init()) {
 		Game game(gRenderer, gFont);
+		//game.onGUI();
 		game.playGame(); 
 	};
 	exit();

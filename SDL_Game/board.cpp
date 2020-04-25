@@ -19,7 +19,7 @@ Board::Board() {
 			this->board[i][WIDTH_SQUARE + 2 * OFFSET_X - j - 1] = 1;
 			this->static_board[i][WIDTH_SQUARE + 2 * OFFSET_X - j - 1] = 1;
 		}
-	}
+	};
 }
 Board::Board(SDL_Renderer* renderer)
 {
@@ -51,6 +51,12 @@ void Board::setRenderer(SDL_Renderer* renderer)
 	(this->pieces)[3].renderer = this->renderer;
 	(this->pieces)[4].renderer = this->renderer;
 	(this->pieces)[5].renderer = this->renderer;
+
+	for (int i = 0; i < HEIGHT_SQUARE; i++) {
+		for (int j = 0; j < WIDTH_SQUARE; j++) {
+			this->square[i][j] = View(this->renderer);
+		}
+	}
 	Board::initMaterial();
 };
 // Danger: Must check available before setMatrix because have no checkAvailable in this function
@@ -84,8 +90,11 @@ void Board::renderBoard(Block block)
 		for (int i = 0; i < HEIGHT_SQUARE; i++) {
 
 				SDL_Rect des = {this->origin_point.x + j * LENGTH_SQUARE + 1,this->origin_point.y + i * LENGTH_SQUARE + 1,LENGTH_SQUARE - 2,LENGTH_SQUARE - 2 };
+				this->square[i][j].setRect(des);
+				this->square[i][j].texture = (this->pieces)[this->board[i + OFFSET_Y][j + OFFSET_X]].texture;
+				this->square[i][j].render();
 				//SDL_RenderFillRect(this->renderer, &des);
-				SDL_RenderCopy(this->renderer, (this->pieces)[this->board[i + OFFSET_Y][j + OFFSET_X]].texture, (this->pieces)[this->board[i + OFFSET_Y][j + OFFSET_X]].clip, &des);
+				//SDL_RenderCopy(this->renderer, (this->pieces)[this->board[i + OFFSET_Y][j + OFFSET_X]].texture, (this->pieces)[this->board[i + OFFSET_Y][j + OFFSET_X]].clip, &des);
 			
 		}
 	}

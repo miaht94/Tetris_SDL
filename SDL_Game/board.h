@@ -21,7 +21,7 @@ class Board
 		int** static_board = new int*[HEIGHT_SQUARE + OFFSET_Y + 1];
 
 		View* pieces = new View[6];
-
+		View square[HEIGHT_SQUARE][WIDTH_SQUARE];
 		Board();
 
 		Board(SDL_Renderer* renderer);

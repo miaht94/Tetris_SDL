@@ -9,26 +9,29 @@ const int LENGTH_SQUARE = 30;
 
 //Number of square on board
 const int WIDTH_SQUARE = 15;
-const int HEIGHT_SQUARE = 20;
+const int HEIGHT_SQUARE = 22;
 
 // TIME HOLDER index of each key
 const int LEFT_ARROW = 0;
 const int UP_ARROW = 1;
 const int DOWN_ARROW = 2;
 const int RIGHT_ARROW = 3;
+const int SPACE = 4;
 
 //Text Config
 const int FONT_SIZE = 36;
+// Task Bar Game Viewport
+const SDL_Rect TASK_BAR_VIEWPORT = { 0, 0, WIDTH_SQUARE * LENGTH_SQUARE, 60 };
+
 
 //Renderer Viewport
-const SDL_Rect SCORE_VIEWPORT = { 0, 0, WIDTH_SQUARE * LENGTH_SQUARE, 70 };
-const SDL_Rect BOARD_VIEWPORT = { 0, SCORE_VIEWPORT.h, WIDTH_SQUARE * LENGTH_SQUARE, HEIGHT_SQUARE * LENGTH_SQUARE };
-
+const SDL_Rect BOARD_VIEWPORT = { 0, TASK_BAR_VIEWPORT.h, WIDTH_SQUARE * LENGTH_SQUARE, HEIGHT_SQUARE * LENGTH_SQUARE };
+const SDL_Rect SCORE_VIEWPORT = { BOARD_VIEWPORT.w, 0, 350, TASK_BAR_VIEWPORT.h + BOARD_VIEWPORT.h };
 //extern int TIME_HOLDER[4];
 
 //Window Config
-const int SCREEN_WIDTH = BOARD_VIEWPORT.w;
-const int SCREEN_HEIGHT = BOARD_VIEWPORT.h + SCORE_VIEWPORT.h;
+const int SCREEN_WIDTH = BOARD_VIEWPORT.w + SCORE_VIEWPORT.w;
+const int SCREEN_HEIGHT = BOARD_VIEWPORT.h + TASK_BAR_VIEWPORT.h;
 
 //View index in arr_textview
 const int NUMBER_ELEMENT_VIEW	= 1;
