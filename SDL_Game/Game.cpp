@@ -10,19 +10,39 @@ void Game::configResource() {
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 	SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
+	//Init Color
 
+	color[SCORE_COLOR] = { 255,255,255 };
+//INIT GAME_PLAYING_________________________________________________________________________
 	//Init View
 	arr_view[NOTIFICATION_VIEW].setRenderer(this->gRenderer);
-
+	arr_view[BACKGROUND_VIEW].setRenderer(this->gRenderer);
+	arr_view[HIGH_SCORE_FRAME].setRenderer(this->gRenderer);
+	arr_view[SCORE_FRAME].setRenderer(this->gRenderer);
 		//Set attribute
 		arr_view[NOTIFICATION_VIEW].width_render = 310;
 		arr_view[NOTIFICATION_VIEW].height_render = 200;
 		arr_view[NOTIFICATION_VIEW].setCenterPoint({ SCREEN_WIDTH / 2,SCREEN_HEIGHT / 2 });
 
+		arr_view[BACKGROUND_VIEW].width_render = SCREEN_WIDTH;
+		arr_view[BACKGROUND_VIEW].height_render = SCREEN_HEIGHT;
+		arr_view[BACKGROUND_VIEW].clip = new SDL_Rect({ 0,0,SCREEN_WIDTH,SCREEN_HEIGHT });
+
+		arr_view[HIGH_SCORE_FRAME].width_render = 300;
+		arr_view[HIGH_SCORE_FRAME].height_render = 180;
+		arr_view[HIGH_SCORE_FRAME].setCenterPoint({ 175, 150 });
+		arr_view[HIGH_SCORE_FRAME].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+
+		arr_view[SCORE_FRAME].width_render = 300;
+		arr_view[SCORE_FRAME].height_render = 180;
+		arr_view[SCORE_FRAME].setCenterPoint({ 175, 500 });
+		arr_view[SCORE_FRAME].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+
 		//Load Texture
 		arr_view[NOTIFICATION_VIEW].loadTexture("textures/frame.png");
-
-
+		arr_view[BACKGROUND_VIEW].loadTexture("textures/ingame_background.jpg");
+		arr_view[HIGH_SCORE_FRAME].loadTexture("textures/score_frame.png");
+		arr_view[SCORE_FRAME].loadTexture("textures/score_frame.png");
 	//Init Text
 	arr_textview[SCORE_TEXT] = TextView(this->font, FONT_SIZE);
 	arr_textview[SCORE_NUMBER] = TextView(this->font, FONT_SIZE);
@@ -39,35 +59,39 @@ void Game::configResource() {
 		//set default text
 		arr_textview[SCORE_TEXT].makeTextTexture("Score", 36, color[SCORE_COLOR]);
 		arr_textview[SCORE_NUMBER].makeTextTexture("0", 36, color[SCORE_COLOR]);
-		arr_textview[HIGH_SCORE_TEXT].makeTextTexture("High Score", 36, color[SCORE_COLOR]);
+		arr_textview[HIGH_SCORE_TEXT].makeTextTexture("High Score", 36, {255,255,255});
 		arr_textview[HIGH_SCORE_NUMBER].makeTextTexture("0", 36, color[SCORE_COLOR]);
 		arr_textview[PAUSE_TEXT].makeTextTexture("GAME PAUSED", FONT_SIZE, { 255,255,255 });
 
 		//set attribute
-		arr_textview[SCORE_TEXT].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
-		arr_textview[SCORE_NUMBER].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
-		arr_textview[HIGH_SCORE_TEXT].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
-		arr_textview[HIGH_SCORE_NUMBER].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+		//arr_textview[SCORE_TEXT].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+		//arr_textview[SCORE_NUMBER].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+		//arr_textview[HIGH_SCORE_TEXT].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
+		//arr_textview[HIGH_SCORE_NUMBER].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
 		
 		arr_textview[PAUSE_TEXT].setCenterPoint({ arr_view[NOTIFICATION_VIEW].width_render / 2, arr_view[NOTIFICATION_VIEW].height_render / 3 });
-		arr_textview[SCORE_TEXT].setCenterPoint({ 175,20 });
-		arr_textview[SCORE_NUMBER].setCenterPoint({ 175,50 });
-		arr_textview[HIGH_SCORE_TEXT].setCenterPoint({ 175, 180 });
-		arr_textview[HIGH_SCORE_NUMBER].setCenterPoint({ 175,210 });
+		arr_textview[HIGH_SCORE_TEXT].setCenterPoint({ arr_view[HIGH_SCORE_FRAME].width_render/2, 30 });
+		arr_textview[HIGH_SCORE_NUMBER].setCenterPoint({ arr_view[HIGH_SCORE_FRAME].width_render/2, 120});
+		arr_textview[SCORE_TEXT].setCenterPoint({ arr_view[SCORE_FRAME].width_render / 2, 30 });
+		arr_textview[SCORE_NUMBER].setCenterPoint({ arr_view[HIGH_SCORE_FRAME].width_render / 2, 120 });
 
 	//set textview's background
 		arr_textview[PAUSE_TEXT].setViewBackground(arr_view[NOTIFICATION_VIEW]);
-
+		arr_textview[SCORE_TEXT].setViewBackground(arr_view[SCORE_FRAME]);
+		arr_textview[SCORE_NUMBER].setViewBackground(arr_view[SCORE_FRAME]);
+		arr_textview[HIGH_SCORE_TEXT].setViewBackground(arr_view[HIGH_SCORE_FRAME]);
+		arr_textview[HIGH_SCORE_NUMBER].setViewBackground(arr_view[HIGH_SCORE_FRAME]);
 	//_______________________________________________________________________________________________
 
 	//config button
 	arr_button[PAUSE_BUTTON] = Button();
 	arr_button[RESUME_BUTTON] = Button();
+	arr_button[REPLAY_BUTTON] = Button();
 
 	//set Renderer
-	arr_button[PAUSE_BUTTON].renderer = this->gRenderer;
+	arr_button[PAUSE_BUTTON].setRenderer(this->gRenderer);
 	arr_button[RESUME_BUTTON].setRenderer(this->gRenderer);
-
+	arr_button[REPLAY_BUTTON].setRenderer(this->gRenderer);
 	//set attribute
 		arr_button[PAUSE_BUTTON].origin_point = { TASK_BAR_VIEWPORT.x, TASK_BAR_VIEWPORT.y };
 		arr_button[PAUSE_BUTTON].width_render = 55;
@@ -76,31 +100,131 @@ void Game::configResource() {
 		arr_button[RESUME_BUTTON].width_render = 60;
 		arr_button[RESUME_BUTTON].height_render = 60;
 
+		arr_button[REPLAY_BUTTON].width_render = 60;
+		arr_button[REPLAY_BUTTON].height_render = 60;
+
 	//set center point render
 		arr_button[PAUSE_BUTTON].setCenterPoint({ 420,30 });
-		arr_button[RESUME_BUTTON].setCenterPoint({ arr_view[NOTIFICATION_VIEW].width_render * 2 / 5,arr_view[NOTIFICATION_VIEW].height_render * 2 / 3 });
+		arr_button[RESUME_BUTTON].setCenterPoint({ arr_view[NOTIFICATION_VIEW].width_render * 1 / 4,arr_view[NOTIFICATION_VIEW].height_render * 2 / 3 });
+		arr_button[REPLAY_BUTTON].setCenterPoint({ arr_view[NOTIFICATION_VIEW].width_render * 3 / 4,arr_view[NOTIFICATION_VIEW].height_render * 2 / 3 });
+	
 	//load texture for button
 		arr_button[PAUSE_BUTTON].loadTexture("textures/play_but_lighter.png", "textures/play_but.png");
 		arr_button[RESUME_BUTTON].loadTexture("textures/play_but_lighter.png", "textures/play_but.png");
+		arr_button[REPLAY_BUTTON].loadTexture("textures/replay_but_lighter.png", "textures/replay_but.png");
 	//set button's background
 		arr_button[RESUME_BUTTON].setViewBackground(arr_view[NOTIFICATION_VIEW]);
+		arr_button[REPLAY_BUTTON].setViewBackground(arr_view[NOTIFICATION_VIEW]);
+//__________________________________________________________________________________________________________________________________________________________
+
+//INIT GUI
+	//gui View
+		gui_view[GUI_BACKGROUND].setRenderer(this->gRenderer);
+		gui_view[GAME_TITLE].setRenderer(this->gRenderer);
+		gui_view[MENU_BACKGROUND].setRenderer(this->gRenderer);
+		gui_view[SELECT_BACKGOUND].setRenderer(this->gRenderer);
+
+		gui_view[GUI_BACKGROUND].loadTexture("textures/background.png");
+		gui_view[GAME_TITLE].loadTexture("textures/Title.png");
+		gui_view[MENU_BACKGROUND].loadTexture("textures/menu_background.png");
+
+		gui_view[GUI_BACKGROUND].x_render = 0;
+		gui_view[GUI_BACKGROUND].y_render = 0;
+		gui_view[GUI_BACKGROUND].width_render = SCREEN_WIDTH;
+		gui_view[GUI_BACKGROUND].height_render = SCREEN_HEIGHT;
+
+		gui_view[GAME_TITLE].width_render = 200;
+		gui_view[GAME_TITLE].height_render = 70;
+		gui_view[GAME_TITLE].setCenterPoint({ -115,100 });
+
+		gui_view[MENU_BACKGROUND].width_render = 310;
+		gui_view[MENU_BACKGROUND].height_render = 230;
+		gui_view[MENU_BACKGROUND].setCenterPoint({ -100,300 });
+
+	//gui Button
+		gui_button[PLAY_GUI_BUTTON].setRenderer(this->gRenderer);
+		gui_button[AUDIO_GUI_BUTTON].setRenderer(this->gRenderer);
+		gui_button[AUDIO_ON].setRenderer(this->gRenderer);
+		gui_button[AUDIO_OFF].setRenderer(this->gRenderer);
+		gui_button[LEVEL_BUTTON].setRenderer(this->gRenderer);
+		gui_button[LEVEL_1].setRenderer(this->gRenderer);
+		gui_button[LEVEL_2].setRenderer(this->gRenderer);
+		gui_button[LEVEL_3].setRenderer(this->gRenderer);
+
+		gui_button[PLAY_GUI_BUTTON].loadTexture("textures/play.png","textures/play_light.png");
+		gui_button[AUDIO_ON].loadTexture("textures/audio_on.png", "textures/audio_on_light.png");
+		gui_button[AUDIO_OFF].loadTexture("textures/audio_off.png", "textures/audio_off_light.png");
+		gui_button[LEVEL_1].loadTexture("textures/level_1.png", "textures/level_1_light.png");
+		gui_button[LEVEL_2].loadTexture("textures/level_2.png", "textures/level_2_light.png");
+		gui_button[LEVEL_3].loadTexture("textures/level_3.png", "textures/level_3_light.png");
+
+		gui_button[PLAY_GUI_BUTTON].width_render = gui_button[PLAY_GUI_BUTTON].width_render/5;
+		gui_button[PLAY_GUI_BUTTON].height_render = gui_button[PLAY_GUI_BUTTON].height_render/5;
+		gui_button[AUDIO_ON].width_render = gui_button[AUDIO_ON].width_render/5;
+		gui_button[AUDIO_ON].height_render = gui_button[AUDIO_ON].height_render/5;
+		gui_button[AUDIO_OFF].width_render = gui_button[AUDIO_OFF].width_render / 5;
+		gui_button[AUDIO_OFF].height_render = gui_button[AUDIO_OFF].height_render / 5;
+		gui_button[LEVEL_1].width_render = gui_button[LEVEL_1].width_render/5;
+		gui_button[LEVEL_1].height_render = gui_button[LEVEL_1].height_render/5;
+		gui_button[LEVEL_2].width_render = gui_button[LEVEL_2].width_render/5;
+		gui_button[LEVEL_2].height_render = gui_button[LEVEL_2].height_render/5;
+		gui_button[LEVEL_3].width_render = gui_button[LEVEL_3].width_render/5;
+		gui_button[LEVEL_3].height_render = gui_button[LEVEL_3].height_render/5;
+
+		gui_button[PLAY_GUI_BUTTON].setCenterPoint({ 175,30 });
+		gui_button[AUDIO_ON].setCenterPoint({ 175,115 });
+		gui_button[AUDIO_OFF].setCenterPoint({ 175,115 });
+		gui_button[LEVEL_1].setCenterPoint({ 175,200 });
+		gui_button[LEVEL_2].setCenterPoint({ 175,200 });
+		gui_button[LEVEL_3].setCenterPoint({ 175,200 });
+
+		gui_button[PLAY_GUI_BUTTON].setViewBackground(gui_view[MENU_BACKGROUND]);
+		gui_button[AUDIO_ON].setViewBackground(gui_view[MENU_BACKGROUND]);
+		gui_button[AUDIO_OFF].setViewBackground(gui_view[MENU_BACKGROUND]);
+		gui_button[LEVEL_1].setViewBackground(gui_view[MENU_BACKGROUND]);
+		gui_button[LEVEL_2].setViewBackground(gui_view[MENU_BACKGROUND]);
+		gui_button[LEVEL_3].setViewBackground(gui_view[MENU_BACKGROUND]);
+
+		//gui_button[AUDIO_GUI_BUTTON] = gui_button[this->audio_status];
+		//gui_button[LEVEL_BUTTON] = gui_button[this->curr_level];
 }
 void Game::onGUI()
 {
-	Sprite background(110, 11, 10, { 0, 0, 534, 600 });
-	background.setRenderer(this->gRenderer);
-	background.setKeyColor({ 201,44,81 });
-	if (!background.loadTexture("textures/gui_background.png")) {
-		cerr << SDL_GetError() << endl;
-	};
-	background.x_render = 0;
-	background.y_render = 0;
-	background.width_render = SCREEN_WIDTH;
-	background.height_render = SCREEN_HEIGHT;
-	while (true) {
+	gui_view[GAME_TITLE].setAnimation("Transform", 300, { 200,0 });
+	gui_view[MENU_BACKGROUND].setAnimation("Transform", 400, { 200,0 });
+	while (!this->quit) {
+		while (SDL_PollEvent(&this->e) != 0) {
+			if (this->e.type == SDL_QUIT) {
+				this->quit = true;
+			}
+		};
+		gui_button[PLAY_GUI_BUTTON].handleMouseEvent(&this->e);
+		gui_button[this->audio_status].handleMouseEvent(&this->e);
+		gui_button[this->curr_level].handleMouseEvent(&this->e);
+		if (gui_button[PLAY_GUI_BUTTON].beClicked()) {
+			this->status = GAME_REPLAY;
+			break;
+		}
+		if ( gui_button[this->audio_status].beClicked()) {
+			this->audio_status = 6 + (this->audio_status + 1) % 2;
+			/*cout << "+++++++++++++++++++++++++++++++++++++++++" << endl;
+			cout << gui_button[this->audio_status].cur_status << endl;
+			cout << gui_button[this->audio_status].pre_status << endl;*/
+		};
+		if (gui_button[this->curr_level].beClicked()) {
+			this->curr_level = 3 + (this->curr_level + 1) % 3;
+			/*cout << "-----------------------------------------" << endl;
+			cout << gui_button[this->curr_level].cur_status << endl;
+			cout << gui_button[this->curr_level].pre_status << endl;*/
+		};
 		SDL_SetRenderDrawColor(this->gRenderer, 255, 255, 255, 255);
 		SDL_RenderClear(this->gRenderer);
-		background.render();
+		gui_view[GUI_BACKGROUND].render();
+		gui_view[GAME_TITLE].render();
+		gui_view[MENU_BACKGROUND].render();
+		gui_button[PLAY_GUI_BUTTON].render();
+		gui_button[this->audio_status].render();
+		gui_button[this->curr_level].render();
 		SDL_RenderPresent(this->gRenderer);
 	};
 }
@@ -112,11 +236,21 @@ void Game::onPause()
 		while (SDL_PollEvent(&this->e) != 0) {
 			if (this->e.type == SDL_QUIT) {
 				this->quit = true;
+				this->status = GAME_EXIT;
 			}
 		};
 		arr_button[RESUME_BUTTON].handleMouseEvent(&this->e);
-		if (arr_button[RESUME_BUTTON].cur_status == "Mouse Down")
+		arr_button[REPLAY_BUTTON].handleMouseEvent(&this->e);
+		if (arr_button[RESUME_BUTTON].beClicked()) {
+			this->status = GAME_PLAYING;
 			unPause = true;
+		}
+		if (arr_button[REPLAY_BUTTON].beClicked()) {
+			this->status = GAME_REPLAY;
+			this->onReplay();
+			unPause = true;
+		}
+		if (this->quit == true) break;
 		SDL_SetRenderDrawColor(gRenderer,255, 255, 255, 255);
 		SDL_RenderClear(gRenderer);
 		renderCurrentGame();
@@ -124,8 +258,9 @@ void Game::onPause()
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 60);
 		SDL_RenderFillRect(this->gRenderer, &blur_background);
 		arr_view[NOTIFICATION_VIEW].render(true);
-		arr_textview[PAUSE_TEXT].render();
+		arr_textview[PAUSE_TEXT].render(true);
 		arr_button[RESUME_BUTTON].render(true);
+		arr_button[REPLAY_BUTTON].render(true);
 		SDL_RenderPresent(gRenderer);
 	}
 }
@@ -135,11 +270,12 @@ void Game::playGame()
 	cout << SCREEN_WIDTH << "    -    " << SCREEN_HEIGHT << endl;
 	Uint32 prev_time = 0;
 	bool game_over = false;
-	while (!(this->quit) && !game_over) {
+	while (!(this->quit) && !game_over && this->status == GAME_PLAYING) {
 		std::string score = "";
 		while (SDL_PollEvent(&this->e) != 0) {
 			if (this->e.type == SDL_QUIT) {
 				this->quit = true;
+				this->status = GAME_EXIT;
 			}
 		};
 		Game::handleEvent(SDL_GetKeyboardState(NULL), prev_time);
@@ -147,7 +283,7 @@ void Game::playGame()
 		SDL_SetRenderDrawColor(this->gRenderer, 255, 255, 255, 255);
 		SDL_RenderClear(this->gRenderer);
 		Uint32 curr_time = SDL_GetTicks();
-		if (curr_time - prev_time >= 1000) {
+		if (curr_time - prev_time >= 1000 /*&& this->board.animationEnded()*/) {
 			SDL_Point next_point = { this->curr_block.matrix_origin_point.x,this->curr_block.matrix_origin_point.y + 1 };
 			if (this->board.isAvailable(this->curr_block.matrix, this->board.static_board, next_point, this->curr_block.current_block)) {
 				this->curr_block.matrix_origin_point.y++;
@@ -163,11 +299,13 @@ void Game::playGame()
 				if (curr_turn_point != 0) {
 					score += to_string(this->curr_score);
 					this->arr_textview[SCORE_NUMBER].makeTextTexture(score.c_str(), 36, this->color[SCORE_COLOR]);
+					this->arr_textview[SCORE_NUMBER].setViewBackground(arr_view[SCORE_FRAME]);
 					this->arr_textview[SCORE_NUMBER].setAnimation("Scale Up", 200);
 				}
 				if (this->curr_high_score < this->curr_score) {
 					this->curr_high_score = this->curr_score;
 					this->arr_textview[HIGH_SCORE_NUMBER].makeTextTexture(to_string(this->curr_high_score).c_str(), 36, this->color[SCORE_COLOR]);
+					this->arr_textview[HIGH_SCORE_NUMBER].setViewBackground(arr_view[HIGH_SCORE_FRAME]);
 					this->arr_textview[HIGH_SCORE_NUMBER].setAnimation("Scale Up", 500);
 				}
 			}
@@ -188,11 +326,16 @@ void Game::playGame()
 void Game::handleGameStatus()
 {
 	if (this->status == GAME_PAUSED) {
-		Game::onPause();
-		this->status = GAME_PLAYING;
+		this->onPause();
 	};
 }
 void Game::renderCurrentGame() {
+	SDL_Rect blur_background = { BOARD_VIEWPORT.x,BOARD_VIEWPORT.y,BOARD_VIEWPORT.w,BOARD_VIEWPORT.h };
+	this->arr_view[BACKGROUND_VIEW].render();
+	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 200);
+	SDL_RenderFillRect(this->gRenderer, &blur_background);
+	this->arr_view[HIGH_SCORE_FRAME].render(true);
+	this->arr_view[SCORE_FRAME].render(true);
 	this->board.renderBoard(this->curr_block);
 	for (int i = 0; i < NUMBER_ELEMENT_TEXTVIEW_ON_PLAYING; i++) {
 		this->arr_textview[i].render(true);
@@ -278,4 +421,9 @@ void Game::handleEvent(const Uint8* current_key_state, Uint32& prev_time)
 		this->status = 1;
 	}
 }
-;
+void Game::onReplay()
+{
+	this->board.reset();
+	this->curr_block = Block();
+	this->curr_score = 0;
+}

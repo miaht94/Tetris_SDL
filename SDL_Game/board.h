@@ -42,9 +42,15 @@ class Board
 		
 		long checkGainPoint();
 
+		void update();
+
+		bool animationEnded();
+
 		// True if available; False if not
 		bool isAvailable(int matrix[][4], int** board, SDL_Point location, int curr_block);
 
 		//check game over
 		bool isGameOver();
+
+		void reset();
 };

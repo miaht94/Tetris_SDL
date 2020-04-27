@@ -83,13 +83,14 @@ void Board::setMatrix(int matrix[][4], int** board, SDL_Point location, int curr
 }
 void Board::renderBoard(Block block)
 {
+	this->update();
 	SDL_Point curr_block_location = block.matrix_origin_point;
 	copyBoard(this->static_board, this->board);
 	Board::setMatrix(block.matrix, this->board,curr_block_location,block.current_block);
 	for (int j = 0; j < WIDTH_SQUARE; j++) {
 		for (int i = 0; i < HEIGHT_SQUARE; i++) {
 
-				SDL_Rect des = {this->origin_point.x + j * LENGTH_SQUARE + 1,this->origin_point.y + i * LENGTH_SQUARE + 1,LENGTH_SQUARE - 2,LENGTH_SQUARE - 2 };
+				SDL_Rect des = {this->origin_point.x + j * LENGTH_SQUARE + 2,this->origin_point.y + i * LENGTH_SQUARE + 2,LENGTH_SQUARE - 4,LENGTH_SQUARE - 4 };
 				this->square[i][j].setRect(des);
 				this->square[i][j].texture = (this->pieces)[this->board[i + OFFSET_Y][j + OFFSET_X]].texture;
 				this->square[i][j].render();
@@ -108,21 +109,13 @@ long Board::checkGainPoint()
 			if (this->static_board[i + OFFSET_Y][j + OFFSET_X] == 0) full_filled = false;
 		};
 		if (full_filled) {
-
-			/*delete[](this->static_board[i + OFFSET_Y]);
-			for (int k = i; k > OFFSET_Y; k--) {
-				(this->static_board)[k + OFFSET_Y] = (this->static_board)[k + OFFSET_Y - 1];
-			};
-			(this->static_board[OFFSET_Y]) = new int[WIDTH_SQUARE + 2 * OFFSET_X];
-			for (int k = 0; k < OFFSET_X; k++) {
-
-				(this->static_board)[OFFSET_Y][k] = 1;
-				(this->static_board)[OFFSET_Y][WIDTH_SQUARE + 2 * OFFSET_X - k - 1] = 1;
-			};
-			for (int k = 0; k < WIDTH_SQUARE; k++) {
-				(this->static_board)[OFFSET_Y][k + OFFSET_X] = 0;
-			}*/
+			for (int j = 0; j < WIDTH_SQUARE; j++) {
+				this->square[i][j].setAnimation("Disappear", 500);
+				this->square[i][j].ended = false;
+			}
 			score_gained += 100;
+
+			/*
 			for (int k = i + OFFSET_Y; k > OFFSET_Y; k--) {
 				for (int l = 0; l < WIDTH_SQUARE + 2 * OFFSET_X; l++) {
 					this->static_board[k][l] = this->static_board[k - 1][l];
@@ -131,11 +124,44 @@ long Board::checkGainPoint()
 			for (int l = 0; l < WIDTH_SQUARE; l++) {
 				this->static_board[OFFSET_Y][l + OFFSET_X] = 0;
 			}
-			i--;
+			i--;*/
 		}
 
 	};
 	return score_gained;
+}
+
+void Board::update()
+{
+	if (this->animationEnded()) {
+		for (int i = 0; i < HEIGHT_SQUARE; i++) {
+			bool full_filled = true;
+			for (int j = 0; j < WIDTH_SQUARE; j++) {
+				if (this->static_board[i + OFFSET_Y][j + OFFSET_X] == 0) full_filled = false;
+			};
+			if (full_filled) {
+				for (int k = i + OFFSET_Y; k > OFFSET_Y; k--) {
+					for (int l = 0; l < WIDTH_SQUARE + 2 * OFFSET_X; l++) {
+						this->static_board[k][l] = this->static_board[k - 1][l];
+					}
+				}
+				for (int l = 0; l < WIDTH_SQUARE; l++) {
+					this->static_board[OFFSET_Y][l + OFFSET_X] = 0;
+				}
+				i--;
+			}
+
+		};
+	}
+}
+
+bool Board::animationEnded() {
+	for (int i = 0; i < HEIGHT_SQUARE; i++) {
+		for (int j = 0; j < WIDTH_SQUARE; j++) {
+			if (!this->square[i][j].ended) return false;
+		}
+	};
+	return true;
 }
 bool Board::isAvailable(int matrix[][4], int** board, SDL_Point location, int curr_block)
 {
@@ -152,5 +178,14 @@ bool Board::isGameOver()
 		if (static_board[OFFSET_Y - 1][OFFSET_X + i] != 0) return true;
 	};
 	return false;
+}
+void Board::reset()
+{
+	for (int i = 0; i < HEIGHT_SQUARE; i++) {
+		for (int j = 0; j < WIDTH_SQUARE; j++) {
+			this->board[i + OFFSET_Y][j + OFFSET_X] = 0;
+			this->static_board[i + OFFSET_Y][j + OFFSET_X] = 0;
+		}
+	}
 }
 ;

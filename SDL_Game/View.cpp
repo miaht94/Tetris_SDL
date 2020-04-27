@@ -104,13 +104,14 @@ int View::clipImage(int x, int y ,int width, int height) {
 	return 1;
 
 }
-bool View::animate(string animation)
+bool View::animate(string animation, bool &ended)
 {
 	if (animation.find("Scale Up") != string::npos) {
 		double ratio_scale = 1.5;
 		SDL_Point center_point;
 		if (this->start_time == NULL) {
 			this->start_time = SDL_GetTicks();
+			ended = false;
 			this->x_render_backup = this->x_render;
 			this->y_render_backup = this->y_render;
 			this->width_render_backup = this->width_render;
@@ -119,7 +120,10 @@ bool View::animate(string animation)
 		}
 		center_point = this->center_point_render_backup;
 		Uint32 time_offset = SDL_GetTicks() - this->start_time;
-		if (time_offset > this->duration) return false;
+		if (time_offset > this->duration) {
+			ended = true;
+			return false;
+		}
 		ratio_scale = ratio_scale - double(time_offset) / double(duration) * ratio_scale + 1;
 		this->width_render = double(this->width_render_backup) * ratio_scale;
 		this->height_render = double(this->height_render_backup) * ratio_scale;
@@ -132,25 +136,94 @@ bool View::animate(string animation)
 		SDL_Point center_point;
 		if (this->start_time == NULL) {
 			this->start_time = SDL_GetTicks();
+			ended = false;
 			this->x_render_backup = this->x_render;
 			this->y_render_backup = this->y_render;
 			this->width_render_backup = this->width_render;
 			this->height_render_backup = this->height_render;
+			this->center_point_render_backup = { this->x_render + this->width_render / 2, this->y_render + this->height_render / 2 };
 		}
-		center_point = this->center_point_render;
+		center_point = this->center_point_render_backup;
 		Uint32 time_offset = SDL_GetTicks() - this->start_time;
-		if (time_offset > this->duration) return false;
+		if (time_offset > this->duration) {
+			ended = true;
+			return false;
+		};
 		ratio_scale = double(time_offset) / double(duration) * ratio_scale;
 		this->width_render = double(this->width_render_backup) * ratio_scale;
 		this->height_render = double(this->height_render_backup) * ratio_scale;
 		this->x_render = center_point.x - this->width_render / 2;
 		this->y_render = center_point.y - this->height_render / 2;
 	};
+
+	if (animation.find("Disappear") != string::npos) {
+		double ratio_scale = 1;
+		SDL_Point center_point;
+		if (this->start_time == NULL) {
+			this->start_time = SDL_GetTicks();
+			ended = false;
+			this->x_render_backup = this->x_render;
+			this->y_render_backup = this->y_render;
+			this->width_render_backup = this->width_render;
+			this->height_render_backup = this->height_render;
+			this->center_point_render_backup = { this->x_render + this->width_render / 2, this->y_render + this->height_render / 2 };
+		}
+		center_point = this->center_point_render_backup;
+		Uint32 time_offset = SDL_GetTicks() - this->start_time;
+		if (time_offset > this->duration) {
+			ended = true;
+			return false;
+		};
+		ratio_scale = ratio_scale - double(time_offset) / double(duration);
+		this->width_render = double(this->width_render_backup) * ratio_scale;
+		this->height_render = double(this->height_render_backup) * ratio_scale;
+		this->x_render = center_point.x - this->width_render / 2;
+		this->y_render = center_point.y - this->height_render / 2;
+	};
+	if (animation.find("Transform") != string::npos) {
+		if (this->start_time == NULL) {
+			this->start_time = SDL_GetTicks();
+			ended = false;
+			this->x_render_backup = this->x_render;
+			this->y_render_backup = this->y_render;
+			this->width_render_backup = this->width_render;
+			this->height_render_backup = this->height_render;
+			this->center_point_render_backup = { this->x_render + this->width_render / 2, this->y_render + this->height_render / 2 };
+		}
+		if (this->transform_vector.x != NULL || this->transform_vector.y != NULL) {
+			Uint32 time_offset = SDL_GetTicks() - this->start_time;
+			double ratio_time = (double)time_offset / (double)duration;
+			if (time_offset > this->duration) {
+				ended = true;
+				return false;
+			};
+			if (this->center_point_render_backup.x != 0 && this->center_point_render_backup.y != 0) {
+				SDL_Point new_center_point;
+				new_center_point.x = this->center_point_render_backup.x + (double)transform_vector.x * ratio_time;
+				new_center_point.y = this->center_point_render_backup.y + (double)transform_vector.y * ratio_time;
+				this->setCenterPoint(new_center_point);
+			}
+			else {
+				this->x_render = this->x_render_backup + transform_vector.x * ratio_time;
+				this->y_render = this->y_render_backup + transform_vector.y * ratio_time;
+			}
+		}
+		else cout << "FAILED TO DO TRANSFORM ANIMATION" << endl;
+	}
 	return true;
 }
 void View::update()
 {
-	if (!View::animate(this->animation)) {
+	if (this->view_background != NULL) {
+		this->origin_point.x = view_background->origin_point.x + view_background->x_render;
+		this->origin_point.y = view_background->origin_point.y + view_background->y_render;
+		this->x_render = this->view_background->width_render * this->x_relative_ratio;
+		this->y_render = this->view_background->height_render * this->y_relative_ratio;
+		this->width_render = this->view_background->width_render * this->width_relative_ratio;
+		this->height_render = this->view_background->height_render * this->height_relative_ratio;
+	};
+
+	if (!View::animate(this->animation, this->ended)) {
 		this->animation = "";
 		this->start_time = NULL;
 		this->duration = NULL;
@@ -159,23 +232,21 @@ void View::update()
 		this->width_render_backup = 0;
 		this->height_render_backup = 0;
 		this->center_point_render_backup = { 0,0 };
-	};
-	
-	if (this->view_background != NULL) {
-		this->origin_point.x = view_background->origin_point.x + view_background->x_render;
-		this->origin_point.y = view_background->origin_point.y + view_background->y_render;
-		this->x_render = this->view_background->width_render * this->x_relative_ratio;
-		this->y_render = this->view_background->height_render * this->y_relative_ratio;
-		this->width_render = this->view_background->width_render * this->width_relative_ratio;
-		this->height_render = this->view_background->height_render * this->height_relative_ratio;
-	}
+		this->transform_vector.x = NULL;
+		this->transform_vector.y = NULL;
+	};	
 }
 ;
 
-void View::setAnimation(string animation, Uint32 duration)
+void View::setAnimation(string animation, Uint32 duration, SDL_Point transform_vector)
 {
 	this->animation = animation;
 	this->duration = duration;
+	this->ended = false;
+	if (transform_vector.x != NULL || transform_vector.y != NULL) {
+		this->transform_vector.x = transform_vector.x;
+		this->transform_vector.y = transform_vector.y;
+	}
 }
 
 int View::render(bool render_with_center_point) {
@@ -205,7 +276,6 @@ void View::setViewBackground(const View& background)
 		this->width_relative_ratio = double(this->width_render) / double(background.width_render);
 		this->height_relative_ratio = double(this->height_render) / double(background.height_render);
 		this->view_background = &background;
-
 	}
 }
 
@@ -264,6 +334,10 @@ bool TextView::makeTextTexture(const char* text, int size, SDL_Color color)
 		double ratio = double(size) / double(this->font_size);
 		this->width_render = double(temp_surface->w) * ratio;
 		this->height_render = double(temp_surface->h) * ratio;
+		if (this->center_point_render.x != 0 && this->center_point_render.y != 0) {
+			this->x_render = this->center_point_render.x - this->width_render / 2;
+			this->y_render = this->center_point_render.y - this->height_render / 2;
+		}
 		//this->center_point_render = {this->origin_point.x + this->width_render / 2,this->origin_point.y + this->height_render / 2 };
 		if (this->texture != NULL) {
 			cout << "TextView texture pointer isn't NULL to make Texture" << endl;
@@ -375,7 +449,12 @@ void Button::render(bool render_with_center_point)
 		this->y_render = this->center_point_render.y - this->height_render / 2;
 	}
 	View::render();
-};
+}
+bool Button::beClicked()
+{
+	return this->cur_status == "Mouse Down" && (this->pre_status == "Mouse Over" || this->pre_status == "Mouse Up");
+}
+;
 
 Sprite::Sprite(int frames_number, int sheet_rows, int sheet_cols, SDL_Rect frame_rect, int fps)
 {

@@ -53,8 +53,14 @@ int main(int agrc, char* argv[]) {
 	
 	if (Init()) {
 		Game game(gRenderer, gFont);
-		//game.onGUI();
-		game.playGame(); 
+		while (true) {
+			if (game.status == GAME_ON_GUI) 
+				game.onGUI();
+			if (game.status == GAME_REPLAY)
+				game.status = GAME_PLAYING;
+				game.playGame();
+			if (game.status == GAME_EXIT) break;
+		}
 	};
 	exit();
 	return 0;

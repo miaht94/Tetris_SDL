@@ -3,6 +3,7 @@
 #include <SDL_image.h>
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <vector>
 #include <map>
 using namespace std;
 class View
@@ -22,8 +23,10 @@ public:
 
 	//Xử lí animation
 		Uint32 start_time = NULL;
+		bool ended = true;
 		string animation;
 		Uint32 duration = NULL;
+		SDL_Point transform_vector = { NULL, NULL };
 		//Các biến backup đưa view về ban đầu sau animation
 		int x_render_backup = 0;
 		int y_render_backup = 0;
@@ -84,11 +87,11 @@ public:
 
 	int clipImage(int x, int y, int width, int height);
 
-	bool animate(string animation);
+	bool animate(string animation, bool &ended);
 
 	void update();
 
-	void setAnimation(string animation, Uint32 duration);
+	void setAnimation(string animation, Uint32 duration, SDL_Point transform_vector = {NULL, NULL});
 
 	int render(bool render_with_center_point = false);
 
@@ -112,14 +115,14 @@ class Button : public View {
 public:
 	std::map<string, SDL_Texture*> button_texture;
 	string cur_status = "Mouse Out";
-	string pre_status = "";
+	string pre_status = "Mouse Down";
 	Button();
 	~Button();
 	void loadTexture(string on_mouse_over, string on_mouse_out);
 	void handleMouseEvent(SDL_Event* e);
 	void update();
 	void render(bool render_with_center_point = false);
-
+	bool beClicked();
 };
 
 class Sprite : public View {

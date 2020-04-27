@@ -26,7 +26,7 @@ const SDL_Rect TASK_BAR_VIEWPORT = { 0, 0, WIDTH_SQUARE * LENGTH_SQUARE, 60 };
 
 //Renderer Viewport
 const SDL_Rect BOARD_VIEWPORT = { 0, TASK_BAR_VIEWPORT.h, WIDTH_SQUARE * LENGTH_SQUARE, HEIGHT_SQUARE * LENGTH_SQUARE };
-const SDL_Rect SCORE_VIEWPORT = { BOARD_VIEWPORT.w, 0, 350, TASK_BAR_VIEWPORT.h + BOARD_VIEWPORT.h };
+const SDL_Rect SCORE_VIEWPORT = { BOARD_VIEWPORT.w, 0, 198, TASK_BAR_VIEWPORT.h + BOARD_VIEWPORT.h };
 //extern int TIME_HOLDER[4];
 
 //Window Config
@@ -34,8 +34,11 @@ const int SCREEN_WIDTH = BOARD_VIEWPORT.w + SCORE_VIEWPORT.w;
 const int SCREEN_HEIGHT = BOARD_VIEWPORT.h + TASK_BAR_VIEWPORT.h;
 
 //View index in arr_textview
-const int NUMBER_ELEMENT_VIEW	= 1;
+const int NUMBER_ELEMENT_VIEW	= 4;
 const int NOTIFICATION_VIEW		= 0;
+const int BACKGROUND_VIEW		= 1;
+const int HIGH_SCORE_FRAME		= 2;
+const int SCORE_FRAME			= 3;
 
 //TextView index in arr_textview
 const int NUMBER_ELEMENT_TEXTVIEW				= 5;
@@ -47,11 +50,30 @@ const int HIGH_SCORE_NUMBER						= 3;
 const int PAUSE_TEXT							= 4;
 
 //Button index in arr_button
-const int NUMBER_ELEMENT_BUTTON				= 2;
+const int NUMBER_ELEMENT_BUTTON				= 3;
 const int NUMBER_ELEMENT_BUTTON_ON_PLAYING	= 1;
 const int PAUSE_BUTTON						= 0;
 const int RESUME_BUTTON						= 1;
+const int REPLAY_BUTTON						= 2;
 
+//View index in gui_view
+const int NUMBER_ELEMENT_GUI_VIEW = 4;
+const int GUI_BACKGROUND = 0;
+const int GAME_TITLE = 1;
+const int MENU_BACKGROUND = 2;
+const int SELECT_BACKGOUND = 3;
+
+//Button index in gui_button
+const int NUMBER_ELEMENT_GUI_BUTTON = 8;
+const int NUMBER_ELEMENT_GUI_RENDER_BUTTON = 3;
+const int PLAY_GUI_BUTTON = 0;
+const int AUDIO_GUI_BUTTON = 1;
+const int LEVEL_BUTTON = 2;
+const int LEVEL_1 = 3;
+const int LEVEL_2 = 4;
+const int LEVEL_3 = 5;
+const int AUDIO_ON = 6;
+const int AUDIO_OFF = 7;
 // SDL Color 
 const int NUMBER_ELEMENT_COLOR	= 3;
 const int SCORE_COLOR			= 0;
@@ -61,7 +83,9 @@ const int PAUSED_TEXT_COLOR		= 2;
 //Game Status
 const int GAME_PLAYING	= 0;
 const int GAME_PAUSED	= 1;
-
+const int GAME_ON_GUI	= 3;
+const int GAME_EXIT		= 4;
+const int GAME_REPLAY = 5;
 /*
 Type 1:
 	_____________
