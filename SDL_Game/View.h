@@ -3,8 +3,10 @@
 #include <SDL_image.h>
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <SDL_Mixer.h>
 #include <vector>
 #include <map>
+#include "Animation.h"
 using namespace std;
 class View
 {
@@ -23,10 +25,12 @@ public:
 
 	//Xử lí animation
 		Uint32 start_time = NULL;
+		Uint32 wait_time = NULL;
 		bool ended = true;
 		string animation;
 		Uint32 duration = NULL;
 		SDL_Point transform_vector = { NULL, NULL };
+		vector<Animation> animation_queue;
 		//Các biến backup đưa view về ban đầu sau animation
 		int x_render_backup = 0;
 		int y_render_backup = 0;
@@ -91,7 +95,7 @@ public:
 
 	void update();
 
-	void setAnimation(string animation, Uint32 duration, SDL_Point transform_vector = {NULL, NULL});
+	void setAnimation(string animation, Uint32 duration, Uint32 wait_time = 0, SDL_Point transform_vector = {NULL, NULL});
 
 	int render(bool render_with_center_point = false);
 

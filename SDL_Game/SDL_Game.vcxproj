@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="Common.cpp" />
@@ -135,6 +136,7 @@
     <ClCompile Include="View.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="Board.h" />
     <ClInclude Include="Common.h" />

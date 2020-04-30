@@ -3,7 +3,7 @@
 #include "Common.h"
 #include "View.h"
 #include "Block.h"
-
+#include "vector"
 class Board
 {
 	private:
@@ -19,7 +19,7 @@ class Board
 		//array for rendering what player can see
 		//static board will be update whenever block finished its fall
 		int** static_board = new int*[HEIGHT_SQUARE + OFFSET_Y + 1];
-
+		vector<SDL_Point> delete_queue;
 		View* pieces = new View[6];
 		View square[HEIGHT_SQUARE][WIDTH_SQUARE];
 		Board();
@@ -51,6 +51,8 @@ class Board
 
 		//check game over
 		bool isGameOver();
+
+		bool clearLine(int line);
 
 		void reset();
 };

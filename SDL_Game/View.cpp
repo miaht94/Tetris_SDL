@@ -170,15 +170,17 @@ bool View::animate(string animation, bool &ended)
 		}
 		center_point = this->center_point_render_backup;
 		Uint32 time_offset = SDL_GetTicks() - this->start_time;
-		if (time_offset > this->duration) {
+		if (time_offset > this->duration + wait_time) {
 			ended = true;
 			return false;
 		};
-		ratio_scale = ratio_scale - double(time_offset) / double(duration);
-		this->width_render = double(this->width_render_backup) * ratio_scale;
-		this->height_render = double(this->height_render_backup) * ratio_scale;
-		this->x_render = center_point.x - this->width_render / 2;
-		this->y_render = center_point.y - this->height_render / 2;
+		if (time_offset >= wait_time) {
+			ratio_scale = ratio_scale - double(time_offset - wait_time) / double(duration);
+			this->width_render = double(this->width_render_backup) * ratio_scale;
+			this->height_render = double(this->height_render_backup) * ratio_scale;
+			this->x_render = center_point.x - this->width_render / 2;
+			this->y_render = center_point.y - this->height_render / 2;
+		}
 	};
 	if (animation.find("Transform") != string::npos) {
 		if (this->start_time == NULL) {
@@ -238,10 +240,11 @@ void View::update()
 }
 ;
 
-void View::setAnimation(string animation, Uint32 duration, SDL_Point transform_vector)
+void View::setAnimation(string animation, Uint32 duration, Uint32 wait_time, SDL_Point transform_vector)
 {
 	this->animation = animation;
 	this->duration = duration;
+	this->wait_time = wait_time;
 	this->ended = false;
 	if (transform_vector.x != NULL || transform_vector.y != NULL) {
 		this->transform_vector.x = transform_vector.x;
@@ -436,10 +439,10 @@ void Button::handleMouseEvent(SDL_Event* e)
 }
 void Button::update()
 {
-	if (pre_status != cur_status) {
+	//if (pre_status != cur_status) {
 		pre_status = cur_status;
 		this->texture = button_texture[cur_status];
-	};
+	//};
 }
 void Button::render(bool render_with_center_point)
 {
@@ -452,7 +455,7 @@ void Button::render(bool render_with_center_point)
 }
 bool Button::beClicked()
 {
-	return this->cur_status == "Mouse Down" && (this->pre_status == "Mouse Over" || this->pre_status == "Mouse Up");
+	return this->cur_status == "Mouse Up" && (this->pre_status == "Mouse Down" || this->pre_status == "Mouse Over");
 }
 ;
 

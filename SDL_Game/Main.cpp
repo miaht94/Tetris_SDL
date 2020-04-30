@@ -12,7 +12,7 @@ TTF_Font* gFont = NULL;
 bool Init() {
 	bool success = true;
 	srand(time(NULL));
-	SDL_Init(SDL_INIT_VIDEO);
+	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 
 	//Initialize PNG loading
 	int imgFlags = IMG_INIT_PNG;
@@ -21,6 +21,13 @@ bool Init() {
 		cerr << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << endl;
 		success = false;
 	};
+
+	//Initialize SDL_mixer
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+	{
+		printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+		success = false;
+	}
 
 	//Initialize SDL_ttf
 	if (TTF_Init() == -1)
@@ -53,13 +60,8 @@ int main(int agrc, char* argv[]) {
 	
 	if (Init()) {
 		Game game(gRenderer, gFont);
-		while (true) {
-			if (game.status == GAME_ON_GUI) 
-				game.onGUI();
-			if (game.status == GAME_REPLAY)
-				game.status = GAME_PLAYING;
-				game.playGame();
-			if (game.status == GAME_EXIT) break;
+		while (!game.quit && game.status != GAME_EXIT) {
+			game.handleGameStatus();
 		}
 	};
 	exit();

@@ -41,13 +41,15 @@ const int HIGH_SCORE_FRAME		= 2;
 const int SCORE_FRAME			= 3;
 
 //TextView index in arr_textview
-const int NUMBER_ELEMENT_TEXTVIEW				= 5;
-const int NUMBER_ELEMENT_TEXTVIEW_ON_PLAYING	= 4;
+const int NUMBER_ELEMENT_TEXTVIEW				= 6;
+const int NUMBER_ELEMENT_TEXTVIEW_ON_PLAYING	= 5;
 const int SCORE_TEXT							= 0;
 const int SCORE_NUMBER							= 1;
 const int HIGH_SCORE_TEXT						= 2;
 const int HIGH_SCORE_NUMBER						= 3;
-const int PAUSE_TEXT							= 4;
+const int COMBO									= 4;
+const int PAUSE_TEXT							= 5;
+
 
 //Button index in arr_button
 const int NUMBER_ELEMENT_BUTTON				= 3;
@@ -67,18 +69,24 @@ const int SELECT_BACKGOUND = 3;
 const int NUMBER_ELEMENT_GUI_BUTTON = 8;
 const int NUMBER_ELEMENT_GUI_RENDER_BUTTON = 3;
 const int PLAY_GUI_BUTTON = 0;
-const int AUDIO_GUI_BUTTON = 1;
-const int LEVEL_BUTTON = 2;
-const int LEVEL_1 = 3;
-const int LEVEL_2 = 4;
-const int LEVEL_3 = 5;
-const int AUDIO_ON = 6;
-const int AUDIO_OFF = 7;
+const int LEVEL_1 = 1;
+const int LEVEL_2 = 2;
+const int LEVEL_3 = 3;
+const int AUDIO_ON = 4;
+const int AUDIO_OFF = 5;
 // SDL Color 
 const int NUMBER_ELEMENT_COLOR	= 3;
 const int SCORE_COLOR			= 0;
 const int HIGH_SCORE_COLOR		= 1;
 const int PAUSED_TEXT_COLOR		= 2;
+
+//Mix Chunk
+const int NUMBER_ELEMENT_CHUNK = 4;
+const int MOVE_CHUNK = 0;
+const int DROP_CHUNK = 1;
+const int LINE_CLEAR_CHUNK = 2;
+const int GAME_OVER_CHUNK = 3;
+
 
 //Game Status
 const int GAME_PLAYING	= 0;

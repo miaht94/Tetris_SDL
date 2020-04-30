@@ -112,6 +112,7 @@ long Board::checkGainPoint()
 			for (int j = 0; j < WIDTH_SQUARE; j++) {
 				this->square[i][j].setAnimation("Disappear", 500);
 				this->square[i][j].ended = false;
+				//this->delete_queue.push_back({ i, j });
 			}
 			score_gained += 100;
 
@@ -133,6 +134,7 @@ long Board::checkGainPoint()
 
 void Board::update()
 {
+	
 	if (this->animationEnded()) {
 		for (int i = 0; i < HEIGHT_SQUARE; i++) {
 			bool full_filled = true;
@@ -153,6 +155,7 @@ void Board::update()
 
 		};
 	}
+	
 }
 
 bool Board::animationEnded() {
