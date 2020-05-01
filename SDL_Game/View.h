@@ -24,13 +24,7 @@ public:
 	SDL_Point center_point_render = { 0,0 };
 
 	//Xử lí animation
-		Uint32 start_time = NULL;
-		Uint32 wait_time = NULL;
-		bool ended = true;
-		string animation;
-		Uint32 duration = NULL;
-		SDL_Point transform_vector = { NULL, NULL };
-		vector<Animation> animation_queue;
+		vector<Animation*> animation_queue;
 		//Các biến backup đưa view về ban đầu sau animation
 		int x_render_backup = 0;
 		int y_render_backup = 0;
@@ -86,12 +80,14 @@ public:
 
 	int setRenderer(SDL_Renderer* renderer);
 
+	int setTexture(SDL_Texture* texture);
+
 	//Function return false when Texture = NULL
 	bool loadTexture(string path, bool have_color_key = false);
 
 	int clipImage(int x, int y, int width, int height);
-
-	bool animate(string animation, bool &ended);
+	
+	bool animate();
 
 	void update();
 

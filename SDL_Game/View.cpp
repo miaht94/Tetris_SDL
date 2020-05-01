@@ -93,7 +93,14 @@ int View::setRenderer(SDL_Renderer* renderer) {
 	this->renderer = renderer;
 	return 1;
 
-};
+}
+int View::setTexture(SDL_Texture* texture)
+{
+	this->texture = texture;
+	this->animation_queue.clear();
+	return 0;
+}
+;
 
 int View::clipImage(int x, int y ,int width, int height) {
 	this->clip = new SDL_Rect;
@@ -104,115 +111,111 @@ int View::clipImage(int x, int y ,int width, int height) {
 	return 1;
 
 }
-bool View::animate(string animation, bool &ended)
+
+bool View::animate()
 {
-	if (animation.find("Scale Up") != string::npos) {
-		double ratio_scale = 1.5;
-		SDL_Point center_point;
-		if (this->start_time == NULL) {
-			this->start_time = SDL_GetTicks();
-			ended = false;
-			this->x_render_backup = this->x_render;
-			this->y_render_backup = this->y_render;
-			this->width_render_backup = this->width_render;
-			this->height_render_backup = this->height_render;
-			this->center_point_render_backup = this->center_point_render;
-		}
-		center_point = this->center_point_render_backup;
-		Uint32 time_offset = SDL_GetTicks() - this->start_time;
-		if (time_offset > this->duration) {
-			ended = true;
-			return false;
-		}
-		ratio_scale = ratio_scale - double(time_offset) / double(duration) * ratio_scale + 1;
-		this->width_render = double(this->width_render_backup) * ratio_scale;
-		this->height_render = double(this->height_render_backup) * ratio_scale;
-		this->x_render = center_point.x - this->width_render / 2;
-		this->y_render = center_point.y - this->height_render / 2;
-	};
-
-	if (animation .find("Appear") != string::npos) {
-		double ratio_scale = 1;
-		SDL_Point center_point;
-		if (this->start_time == NULL) {
-			this->start_time = SDL_GetTicks();
-			ended = false;
-			this->x_render_backup = this->x_render;
-			this->y_render_backup = this->y_render;
-			this->width_render_backup = this->width_render;
-			this->height_render_backup = this->height_render;
-			this->center_point_render_backup = { this->x_render + this->width_render / 2, this->y_render + this->height_render / 2 };
-		}
-		center_point = this->center_point_render_backup;
-		Uint32 time_offset = SDL_GetTicks() - this->start_time;
-		if (time_offset > this->duration) {
-			ended = true;
-			return false;
+	bool all_done = true;
+	for (int i = 0; i < animation_queue.size(); i++) {
+		if (animation_queue[i]->ended) continue;
+		if (animation_queue[i]->temp_time == NULL) {
+			animation_queue[i]->temp_time = SDL_GetTicks();
 		};
-		ratio_scale = double(time_offset) / double(duration) * ratio_scale;
-		this->width_render = double(this->width_render_backup) * ratio_scale;
-		this->height_render = double(this->height_render_backup) * ratio_scale;
-		this->x_render = center_point.x - this->width_render / 2;
-		this->y_render = center_point.y - this->height_render / 2;
-	};
-
-	if (animation.find("Disappear") != string::npos) {
-		double ratio_scale = 1;
-		SDL_Point center_point;
-		if (this->start_time == NULL) {
-			this->start_time = SDL_GetTicks();
-			ended = false;
-			this->x_render_backup = this->x_render;
-			this->y_render_backup = this->y_render;
-			this->width_render_backup = this->width_render;
-			this->height_render_backup = this->height_render;
-			this->center_point_render_backup = { this->x_render + this->width_render / 2, this->y_render + this->height_render / 2 };
+		if (SDL_GetTicks() - animation_queue[i]->temp_time < animation_queue[i]->wait_time) {
+			continue;
 		}
-		center_point = this->center_point_render_backup;
-		Uint32 time_offset = SDL_GetTicks() - this->start_time;
-		if (time_offset > this->duration + wait_time) {
-			ended = true;
-			return false;
-		};
-		if (time_offset >= wait_time) {
-			ratio_scale = ratio_scale - double(time_offset - wait_time) / double(duration);
+		if (animation_queue[i]->name.find("Scale Up") != string::npos) {
+			double ratio_scale = 1.5;
+			SDL_Point center_point;
+			if (animation_queue[i]->start_time == NULL) {
+				animation_queue[i]->start_time = SDL_GetTicks();
+				animation_queue[i]->ended = false;
+			}
+			center_point = this->center_point_render_backup;
+			Uint32 time_offset = SDL_GetTicks() - animation_queue[i]->start_time;
+			if (time_offset > animation_queue[i]->duration) {
+				animation_queue[i]->ended = true;
+				continue;
+			}
+			ratio_scale = ratio_scale - double(time_offset) / double(animation_queue[i]->duration) * ratio_scale + 1;
 			this->width_render = double(this->width_render_backup) * ratio_scale;
 			this->height_render = double(this->height_render_backup) * ratio_scale;
 			this->x_render = center_point.x - this->width_render / 2;
 			this->y_render = center_point.y - this->height_render / 2;
+		};
+
+		if (animation_queue[i]->name.find("Appear") != string::npos) {
+			double ratio_scale = 1;
+			SDL_Point center_point;
+			if (animation_queue[i]->start_time == NULL) {
+				animation_queue[i]->start_time = SDL_GetTicks();
+				animation_queue[i]->ended = false;
+			}
+			center_point = this->center_point_render_backup;
+			Uint32 time_offset = SDL_GetTicks() - animation_queue[i]->start_time;
+			if (time_offset > animation_queue[i]->duration) {
+				animation_queue[i]->ended = true;
+				continue;
+			};
+			ratio_scale = double(time_offset) / double(animation_queue[i]->duration) * ratio_scale;
+			this->width_render = double(this->width_render_backup) * ratio_scale;
+			this->height_render = double(this->height_render_backup) * ratio_scale;
+			this->x_render = center_point.x - this->width_render / 2;
+			this->y_render = center_point.y - this->height_render / 2;
+		};
+
+		if (animation_queue[i]->name.find("Disappear") != string::npos) {
+			double ratio_scale = 1;
+			SDL_Point center_point;
+			if (animation_queue[i]->start_time == NULL) {
+				animation_queue[i]->start_time = SDL_GetTicks();
+				animation_queue[i]->ended = false;
+			}
+			center_point = this->center_point_render_backup;
+			Uint32 time_offset = SDL_GetTicks() - animation_queue[i]->start_time;
+			if (time_offset > animation_queue[i]->duration) {
+				animation_queue[i]->ended = true;
+				continue;
+			};
+			ratio_scale = ratio_scale - double(time_offset) / double(animation_queue[i]->duration);
+			this->width_render = double(this->width_render_backup) * ratio_scale;
+			this->height_render = double(this->height_render_backup) * ratio_scale;
+			this->x_render = center_point.x - this->width_render / 2;
+			this->y_render = center_point.y - this->height_render / 2;
+			
+		};
+		if (animation_queue[i]->name.find("Transform") != string::npos) {
+			if (animation_queue[i]->start_time == NULL) {
+				animation_queue[i]->start_time = SDL_GetTicks();
+				animation_queue[i]->ended = false;
+			}
+			if (animation_queue[i]->transform_vector.x != NULL || animation_queue[i]->transform_vector.y != NULL) {
+				Uint32 time_offset = SDL_GetTicks() - animation_queue[i]->start_time;
+				double ratio_time = (double)time_offset / (double)animation_queue[i]->duration;
+				if (time_offset > animation_queue[i]->duration) {
+					animation_queue[i]->ended = true;
+					continue;
+				};
+				if (this->center_point_render_backup.x != 0 && this->center_point_render_backup.y != 0) {
+					SDL_Point new_center_point;
+					new_center_point.x = this->center_point_render_backup.x + (double)animation_queue[i]->transform_vector.x * ratio_time;
+					new_center_point.y = this->center_point_render_backup.y + (double)animation_queue[i]->transform_vector.y * ratio_time;
+					this->setCenterPoint(new_center_point);
+				}
+				else {
+					this->x_render = this->x_render_backup + animation_queue[i]->transform_vector.x * ratio_time;
+					this->y_render = this->y_render_backup + animation_queue[i]->transform_vector.y * ratio_time;
+				}
+			}
+			else cout << "FAILED TO DO TRANSFORM ANIMATION" << endl;
 		}
 	};
-	if (animation.find("Transform") != string::npos) {
-		if (this->start_time == NULL) {
-			this->start_time = SDL_GetTicks();
-			ended = false;
-			this->x_render_backup = this->x_render;
-			this->y_render_backup = this->y_render;
-			this->width_render_backup = this->width_render;
-			this->height_render_backup = this->height_render;
-			this->center_point_render_backup = { this->x_render + this->width_render / 2, this->y_render + this->height_render / 2 };
+	for (auto it = animation_queue.begin(); it < animation_queue.end(); it++) {
+		if (!(*it)->ended) {
+			all_done = false;
+			break;
 		}
-		if (this->transform_vector.x != NULL || this->transform_vector.y != NULL) {
-			Uint32 time_offset = SDL_GetTicks() - this->start_time;
-			double ratio_time = (double)time_offset / (double)duration;
-			if (time_offset > this->duration) {
-				ended = true;
-				return false;
-			};
-			if (this->center_point_render_backup.x != 0 && this->center_point_render_backup.y != 0) {
-				SDL_Point new_center_point;
-				new_center_point.x = this->center_point_render_backup.x + (double)transform_vector.x * ratio_time;
-				new_center_point.y = this->center_point_render_backup.y + (double)transform_vector.y * ratio_time;
-				this->setCenterPoint(new_center_point);
-			}
-			else {
-				this->x_render = this->x_render_backup + transform_vector.x * ratio_time;
-				this->y_render = this->y_render_backup + transform_vector.y * ratio_time;
-			}
-		}
-		else cout << "FAILED TO DO TRANSFORM ANIMATION" << endl;
-	}
-	return true;
+	};
+	return all_done;
 }
 void View::update()
 {
@@ -225,31 +228,26 @@ void View::update()
 		this->height_render = this->view_background->height_render * this->height_relative_ratio;
 	};
 
-	if (!View::animate(this->animation, this->ended)) {
-		this->animation = "";
-		this->start_time = NULL;
-		this->duration = NULL;
+	if (View::animate()) {
+		this->animation_queue.clear();
 		this->x_render_backup = 0;
 		this->y_render_backup = 0;
 		this->width_render_backup = 0;
 		this->height_render_backup = 0;
 		this->center_point_render_backup = { 0,0 };
-		this->transform_vector.x = NULL;
-		this->transform_vector.y = NULL;
 	};	
 }
 ;
 
 void View::setAnimation(string animation, Uint32 duration, Uint32 wait_time, SDL_Point transform_vector)
 {
-	this->animation = animation;
-	this->duration = duration;
-	this->wait_time = wait_time;
-	this->ended = false;
-	if (transform_vector.x != NULL || transform_vector.y != NULL) {
-		this->transform_vector.x = transform_vector.x;
-		this->transform_vector.y = transform_vector.y;
-	}
+	this->x_render_backup = this->x_render;
+	this->y_render_backup = this->y_render;
+	this->width_render_backup = this->width_render;
+	this->height_render_backup = this->height_render;
+	this->center_point_render_backup = { this->x_render + this->width_render / 2, this->y_render + this->height_render / 2 };
+	Animation* new_animation = new Animation(animation, duration, transform_vector, wait_time);
+	this->animation_queue.push_back(new_animation);
 }
 
 int View::render(bool render_with_center_point) {
@@ -326,6 +324,7 @@ bool TextView::makeTextTexture(const char* text, int size, SDL_Color color)
 {
 	if (this->texture != NULL) {
 		SDL_DestroyTexture(this->texture);
+		this->animation_queue.clear();
 		this->texture = NULL;
 	}
 	SDL_Surface* temp_surface = TTF_RenderText_Blended(this->font, text, color);

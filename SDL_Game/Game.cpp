@@ -132,7 +132,7 @@ void Game::configResource() {
 		gui_view[MENU_BACKGROUND].setRenderer(this->gRenderer);
 		gui_view[SELECT_BACKGOUND].setRenderer(this->gRenderer);
 
-		gui_view[GUI_BACKGROUND].loadTexture("textures/background.png");
+		gui_view[GUI_BACKGROUND].loadTexture("textures/background_white.png");
 		gui_view[GAME_TITLE].loadTexture("textures/Title.png");
 		gui_view[MENU_BACKGROUND].loadTexture("textures/menu_background.png");
 
@@ -164,18 +164,18 @@ void Game::configResource() {
 		gui_button[LEVEL_2].loadTexture("textures/level_2.png", "textures/level_2_light.png");
 		gui_button[LEVEL_3].loadTexture("textures/level_3.png", "textures/level_3_light.png");
 
-		gui_button[PLAY_GUI_BUTTON].width_render = gui_button[PLAY_GUI_BUTTON].width_render/5;
-		gui_button[PLAY_GUI_BUTTON].height_render = gui_button[PLAY_GUI_BUTTON].height_render/5;
-		gui_button[AUDIO_ON].width_render = gui_button[AUDIO_ON].width_render/5;
-		gui_button[AUDIO_ON].height_render = gui_button[AUDIO_ON].height_render/5;
-		gui_button[AUDIO_OFF].width_render = gui_button[AUDIO_OFF].width_render / 5;
-		gui_button[AUDIO_OFF].height_render = gui_button[AUDIO_OFF].height_render / 5;
-		gui_button[LEVEL_1].width_render = gui_button[LEVEL_1].width_render/5;
-		gui_button[LEVEL_1].height_render = gui_button[LEVEL_1].height_render/5;
-		gui_button[LEVEL_2].width_render = gui_button[LEVEL_2].width_render/5;
-		gui_button[LEVEL_2].height_render = gui_button[LEVEL_2].height_render/5;
-		gui_button[LEVEL_3].width_render = gui_button[LEVEL_3].width_render/5;
-		gui_button[LEVEL_3].height_render = gui_button[LEVEL_3].height_render/5;
+		gui_button[PLAY_GUI_BUTTON].width_render = gui_button[PLAY_GUI_BUTTON].width_render;
+		gui_button[PLAY_GUI_BUTTON].height_render = gui_button[PLAY_GUI_BUTTON].height_render;
+		gui_button[AUDIO_ON].width_render = gui_button[AUDIO_ON].width_render;
+		gui_button[AUDIO_ON].height_render = gui_button[AUDIO_ON].height_render;
+		gui_button[AUDIO_OFF].width_render = gui_button[AUDIO_OFF].width_render;
+		gui_button[AUDIO_OFF].height_render = gui_button[AUDIO_OFF].height_render;
+		gui_button[LEVEL_1].width_render = gui_button[LEVEL_1].width_render;
+		gui_button[LEVEL_1].height_render = gui_button[LEVEL_1].height_render;
+		gui_button[LEVEL_2].width_render = gui_button[LEVEL_2].width_render;
+		gui_button[LEVEL_2].height_render = gui_button[LEVEL_2].height_render;
+		gui_button[LEVEL_3].width_render = gui_button[LEVEL_3].width_render;
+		gui_button[LEVEL_3].height_render = gui_button[LEVEL_3].height_render;
 
 		gui_button[PLAY_GUI_BUTTON].setCenterPoint({ 175,30 });
 		gui_button[AUDIO_ON].setCenterPoint({ 175,115 });
@@ -205,8 +205,8 @@ void Game::playMusic(Mix_Chunk* chunk, Mix_Music* music)
 }
 void Game::onGUI()
 {
-	gui_view[GAME_TITLE].setAnimation("Transform", 300, NULL ,{ 200,0 });
-	gui_view[MENU_BACKGROUND].setAnimation("Transform", 400, NULL, { 200,0 });
+	gui_view[GAME_TITLE].setAnimation("Transform", 500, NULL ,{ 200,0 });
+	gui_view[MENU_BACKGROUND].setAnimation("Transform", 800, NULL, { 200,0 });
 	Uint32 temp;
 	while (!this->quit && this->status == GAME_ON_GUI) {
 		while (SDL_PollEvent(&this->e) != 0) {
@@ -266,8 +266,8 @@ void Game::playGame()
 		SDL_SetRenderDrawColor(this->gRenderer, 255, 255, 255, 255);
 		SDL_RenderClear(this->gRenderer);
 		Uint32 curr_time = SDL_GetTicks();
-		if (arr_textview[COMBO].ended && arr_textview[COMBO].texture!=NULL) 
-			arr_textview[COMBO].setAnimation("Disappear", 1000,1000);
+		//if (arr_textview[COMBO].animation_queue.size() == 0 && arr_textview[COMBO].texture!=NULL) 
+		//	arr_textview[COMBO].setAnimation("Disappear", 1000,1000);
 		if (curr_time - prev_fall_time >= 1000/this->curr_level || this->hard_drop/*&& this->board.animationEnded()*/) {
 			this->hard_drop = false;
 			SDL_Point next_point = { this->curr_block.matrix_origin_point.x,this->curr_block.matrix_origin_point.y + 1 };
@@ -289,6 +289,7 @@ void Game::playGame()
 					string combo = "Combo " + to_string(curr_turn_point /100);
 					this->arr_textview[COMBO].makeTextTexture(combo.c_str(), 36, { 0,0,0 });
 					this->arr_textview[COMBO].setAnimation("Scale Up", 200);
+					arr_textview[COMBO].setAnimation("Disappear", 600, 1000);
 					this->arr_textview[SCORE_NUMBER].makeTextTexture(score.c_str(), 36, this->color[SCORE_COLOR]);
 					this->arr_textview[SCORE_NUMBER].setViewBackground(arr_view[SCORE_FRAME]);
 					this->arr_textview[SCORE_NUMBER].setAnimation("Scale Up", 200);
