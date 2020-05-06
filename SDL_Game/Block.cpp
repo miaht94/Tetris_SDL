@@ -3,8 +3,8 @@
 Block::Block()
 {
 	//Set Appear Location for Block on middle top 
-	this->matrix_origin_point.x = (WIDTH_SQUARE + 4) / 2;
-	this->matrix_origin_point.y = 0;
+	this->matrix_origin_point.x = (WIDTH_SQUARE + 2 * OFFSET_X) / 2 ;
+	this->matrix_origin_point.y = 1;
 
 	//Generate random Block for FIGURE
 	int rand_number = rand() % 7;

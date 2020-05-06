@@ -62,6 +62,18 @@ int View::setH(int h) {
 
 }
 
+int View::setAlpha(int alpha)
+{
+	if (this->getBlendMode() != SDL_BLENDMODE_BLEND) {
+		this->setBlendMode(SDL_BLENDMODE_BLEND);
+	}
+	else {
+		SDL_SetTextureAlphaMod(this->texture, alpha);
+		this->alpha = alpha;
+	}
+	return 1;
+}
+
 int View::setRect(SDL_Rect rect)
 {
 	this->x_render		= rect.x;
@@ -100,6 +112,13 @@ int View::setTexture(SDL_Texture* texture)
 	this->animation_queue.clear();
 	return 0;
 }
+SDL_Rect View::getOriginalTextureSize()
+{
+	if (this->texture_width == 0 || this->texture_width == 0) {
+		SDL_QueryTexture(this->texture, NULL, NULL, &this->texture_width, &this->texture_height);
+	}
+	return SDL_Rect { 0, 0, texture_width, texture_height };
+}
 ;
 
 int View::clipImage(int x, int y ,int width, int height) {
@@ -110,6 +129,19 @@ int View::clipImage(int x, int y ,int width, int height) {
 	this->clip->h = height;
 	return 1;
 
+}
+
+SDL_BlendMode View::getBlendMode()
+{
+	SDL_GetTextureBlendMode(this->texture, &this->blend_mode);
+	return this->blend_mode;
+}
+
+SDL_BlendMode View::setBlendMode(SDL_BlendMode blend_mode)
+{
+	SDL_SetTextureBlendMode(this->texture,blend_mode);
+	this->blend_mode = blend_mode;
+	return this->blend_mode;
 }
 
 bool View::animate()
@@ -124,7 +156,7 @@ bool View::animate()
 			continue;
 		}
 		if (animation_queue[i]->name.find("Scale Up") != string::npos) {
-			double ratio_scale = 1.5;
+			double ratio_scale = 2;
 			SDL_Point center_point;
 			if (animation_queue[i]->start_time == NULL) {
 				animation_queue[i]->start_time = SDL_GetTicks();
@@ -136,7 +168,10 @@ bool View::animate()
 				animation_queue[i]->ended = true;
 				continue;
 			}
-			ratio_scale = ratio_scale - double(time_offset) / double(animation_queue[i]->duration) * ratio_scale + 1;
+			//ratio_scale = ratio_scale - double(time_offset) / double(animation_queue[i]->duration) * ratio_scale + 1;
+			if (time_offset < animation_queue[i]->duration/2)
+				ratio_scale = (ratio_scale - 1) * double(time_offset) / double(animation_queue[i]->duration / 2) + 1;
+			else ratio_scale = (1 - ratio_scale) * (double(time_offset) / double(animation_queue[i]->duration / 2) - 1) + ratio_scale;
 			this->width_render = double(this->width_render_backup) * ratio_scale;
 			this->height_render = double(this->height_render_backup) * ratio_scale;
 			this->x_render = center_point.x - this->width_render / 2;
@@ -208,6 +243,90 @@ bool View::animate()
 			}
 			else cout << "FAILED TO DO TRANSFORM ANIMATION" << endl;
 		}
+		if (animation_queue[i]->name.find("Fade In") != string::npos) {
+			double ratio = 1;
+			int alpha;
+			if (animation_queue[i]->start_time == NULL) {
+				animation_queue[i]->start_time = SDL_GetTicks();
+				animation_queue[i]->ended = false;
+			};
+			if (this->getBlendMode() != SDL_BLENDMODE_BLEND) {
+				this->setBlendMode(SDL_BLENDMODE_BLEND);
+			};
+			Uint32 time_offset = SDL_GetTicks() - animation_queue[i]->start_time;
+			if (time_offset > animation_queue[i]->duration) {
+				animation_queue[i]->ended = true;
+				continue;
+			};
+			ratio = (double)time_offset / (double)animation_queue[i]->duration;
+			alpha = ratio * 255;
+			this->setAlpha(alpha);
+		};
+		if (animation_queue[i]->name.find("Fade Out") != string::npos) {
+			double ratio = 1;
+			int alpha;
+			if (animation_queue[i]->start_time == NULL) {
+				animation_queue[i]->start_time = SDL_GetTicks();
+				animation_queue[i]->ended = false;
+			};
+			if (this->getBlendMode() != SDL_BLENDMODE_BLEND) {
+				this->setBlendMode(SDL_BLENDMODE_BLEND);
+			};
+			Uint32 time_offset = SDL_GetTicks() - animation_queue[i]->start_time;
+			if (time_offset > animation_queue[i]->duration) {
+				animation_queue[i]->ended = true;
+				continue;
+			};
+			ratio = (double)time_offset / (double)animation_queue[i]->duration;
+			alpha = (1-ratio) * 255;
+			this->setAlpha(alpha);
+		};
+		if (animation_queue[i]->name.find("Switch Texture") != string::npos) {
+			if (animation_queue[i]->start_time == NULL) {
+				animation_queue[i]->start_time = SDL_GetTicks();
+				animation_queue[i]->ended = false;
+				this->texture = animation_queue[i]->temp_texture;
+			}
+			Uint32 time_offset = SDL_GetTicks() - animation_queue[i]->start_time;
+			this->texture = animation_queue[i]->temp_texture;
+			if (time_offset > animation_queue[i]->duration) {
+				animation_queue[i]->ended = true;
+				this->texture = this->backup_texture;
+				continue;
+			};
+			
+		};
+		if (animation_queue[i]->name.find("Rotate") != string::npos) {
+			if (animation_queue[i]->start_time == NULL) {
+				animation_queue[i]->start_time = SDL_GetTicks();
+				animation_queue[i]->ended = false;
+				this->angle_backup = this->angle;
+			};
+			Uint32 time_offset = SDL_GetTicks() - animation_queue[i]->start_time;
+			if (time_offset > animation_queue[i]->duration) {
+				animation_queue[i]->ended = true;
+				continue;
+			};
+			this->angle = angle_backup + animation_queue[i]->angle_rotate * (double)time_offset / (double)animation_queue[i]->duration;
+		};
+		if (animation_queue[i]->name.find("Cut Down") != string::npos) {
+			if (animation_queue[i]->start_time == NULL) {
+				animation_queue[i]->start_time = SDL_GetTicks();
+				animation_queue[i]->ended = false;
+			}
+			Uint32 time_offset = SDL_GetTicks() - animation_queue[i]->start_time;
+			if (time_offset > animation_queue[i]->duration) {
+				animation_queue[i]->ended = true;
+				continue;
+			};
+			SDL_Rect origional_size = this->getOriginalTextureSize();
+			int new_y_render = this->y_render_backup + this->height_render_backup * (double)time_offset / (double)animation_queue[i]->duration;
+			int new_height_render = this->height_render_backup - (new_y_render - this->y_render_backup);
+			int new_clip_height = double(new_height_render) / double(this->height_render_backup) * origional_size.h;
+			//this->y_render = this->y_render_backup + this->height_render_backup * (double)time_offset / (double)animation_queue[i]->duration;
+			this->clipImage(0, 0, origional_size.w, new_clip_height);
+			this->setRect({ this->x_render_backup, new_y_render, this->width_render_backup, new_height_render });
+		};
 	};
 	for (auto it = animation_queue.begin(); it < animation_queue.end(); it++) {
 		if (!(*it)->ended) {
@@ -234,6 +353,7 @@ void View::update()
 		this->y_render_backup = 0;
 		this->width_render_backup = 0;
 		this->height_render_backup = 0;
+		this->angle_backup = 0;
 		this->center_point_render_backup = { 0,0 };
 	};	
 }
@@ -248,18 +368,43 @@ void View::setAnimation(string animation, Uint32 duration, Uint32 wait_time, SDL
 	this->center_point_render_backup = { this->x_render + this->width_render / 2, this->y_render + this->height_render / 2 };
 	Animation* new_animation = new Animation(animation, duration, transform_vector, wait_time);
 	this->animation_queue.push_back(new_animation);
+	if (animation.find("Fade In") != string::npos) {
+		this->setAlpha(0);
+	};
+}
+
+void View::setAnimation(string animation, Uint32 duration, SDL_Texture* temp_texture, Uint32 wait_time)
+{
+	Animation* new_animation = new Animation(animation, duration, temp_texture, wait_time);
+	this->animation_queue.push_back(new_animation);
+	this->backup_texture = this->texture;
+	this->texture = temp_texture;
+}
+
+void View::setAnimation(Animation* animation)
+{
+	this->animation_queue.push_back(animation);
 }
 
 int View::render(bool render_with_center_point) {
-	if (this->texture == NULL) cerr << "Please load texture for View" << endl;
+	if (this->texture == NULL && !this->texture_may_null) cerr << "Please load texture for View" << endl;
 	if (this->renderer == NULL) cerr << "Please load renderer for View" << endl;
 	View::update();
 	if ((this->center_point_render.x != 0 || this->center_point_render.y != 0) && render_with_center_point) {
 		this->x_render = this->center_point_render.x - this->width_render / 2;
 		this->y_render = this->center_point_render.y - this->height_render / 2;
 	}
+	this->angle = this->angle % 360;
 	SDL_Rect rect_des = { this->x_render + origin_point.x, this->y_render + origin_point.y, this->width_render, this->height_render };
-	SDL_RenderCopy(this->renderer, texture, this->clip, &rect_des);
+	if (this->angle == 0) 
+		SDL_RenderCopy(this->renderer, texture, this->clip, &rect_des);
+	else {
+		if (angle < 0) this->angle = -angle;
+		SDL_RenderCopyEx(this->renderer, this->texture, this->clip, &rect_des, this->angle, NULL , SDL_FLIP_NONE);
+	}
+	if (alpha != 255) {
+		this->setAlpha(255);
+	}
 	return 1;
 
 }
@@ -301,6 +446,7 @@ bool View::loadTexture(string path, bool have_color_key) {
 	if (this->texture != NULL && this->width_render == 0 && this->height_render == 0) {
 
 		SDL_QueryTexture(this->texture, NULL, NULL, &(this->width_render), &(this->height_render));
+		SDL_QueryTexture(this->texture, NULL, NULL, &(this->texture_width), &(this->texture_height));
 		//this->center_point_render = { this->width_render / 2, this->height_render / 2 };
 		return true;
 
@@ -395,7 +541,7 @@ void Button::handleMouseEvent(SDL_Event* e)
 	if (e->type == SDL_MOUSEMOTION || e->type == SDL_MOUSEBUTTONUP || e->type == SDL_MOUSEBUTTONDOWN) {
 		SDL_Point MOUSE_POSITION;
 		SDL_GetMouseState(&MOUSE_POSITION.x, &MOUSE_POSITION.y);
-		cout << MOUSE_POSITION.x << "  -  " << MOUSE_POSITION.y << endl;
+		//cout << MOUSE_POSITION.x << "  -  " << MOUSE_POSITION.y << endl;
 		if (MOUSE_POSITION.x < this->origin_point.x + this->x_render)
 		{
 			inside = false;

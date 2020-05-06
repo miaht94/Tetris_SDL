@@ -3,7 +3,7 @@
 #include <SDL_image.h>
 #include <SDL.h>
 #include <SDL_ttf.h>
-#include <SDL_Mixer.h>
+#include <SDL_mixer.h>
 #include <vector>
 #include <map>
 #include "Animation.h"
@@ -21,8 +21,11 @@ public:
 	int y_render      = 0;
 	int width_render  = 0;
 	int height_render = 0;
+	int alpha = 255;
+	int angle = 0;
 	SDL_Point center_point_render = { 0,0 };
 
+	bool texture_may_null = false;
 	//Xử lí animation
 		vector<Animation*> animation_queue;
 		//Các biến backup đưa view về ban đầu sau animation
@@ -30,8 +33,9 @@ public:
 		int y_render_backup = 0;
 		int width_render_backup = 0;
 		int height_render_backup = 0;
+		int angle_backup = 0;
 		SDL_Point center_point_render_backup = { 0,0 };
-	
+		SDL_Texture* backup_texture = NULL;
 	//View Background 
 		const View* view_background = NULL;
 		double x_relative_ratio = 0;
@@ -44,6 +48,10 @@ public:
 	int G = 0;
 	int B = 0;
 
+	// Original Width, Height of source image;
+	int texture_width;
+	int texture_height;
+
 	SDL_Renderer* renderer = NULL;
 
 	SDL_Texture* texture = NULL;
@@ -54,6 +62,7 @@ public:
 	//xác định diện tích, tọa độ vùng lấy từ image để đưa vào texture 
 	SDL_Rect* clip = NULL;
 
+	SDL_BlendMode blend_mode = SDL_BLENDMODE_NONE;
 	View();
 
 	View(SDL_Renderer* gRenderer);
@@ -70,7 +79,9 @@ public:
 
 	int setW(int w);
 
-	int setH(int h);	
+	int setH(int h);
+
+	int setAlpha(int alpha);
 
 	int setRect(SDL_Rect rect);
 
@@ -82,16 +93,26 @@ public:
 
 	int setTexture(SDL_Texture* texture);
 
+	SDL_Rect getOriginalTextureSize();
+
 	//Function return false when Texture = NULL
 	bool loadTexture(string path, bool have_color_key = false);
 
 	int clipImage(int x, int y, int width, int height);
+
+	SDL_BlendMode getBlendMode();
+
+	SDL_BlendMode setBlendMode(SDL_BlendMode blend_mode);
 	
 	bool animate();
 
 	void update();
 
 	void setAnimation(string animation, Uint32 duration, Uint32 wait_time = 0, SDL_Point transform_vector = {NULL, NULL});
+
+	void setAnimation(string animation, Uint32 duration, SDL_Texture* temp_texture,Uint32 wait_time = 0);
+
+	void setAnimation(Animation* animation);
 
 	int render(bool render_with_center_point = false);
 

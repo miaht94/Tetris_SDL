@@ -9,6 +9,7 @@ SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
 TTF_Font* gFont = NULL;
 
+//Init Function from LazyFoo
 bool Init() {
 	bool success = true;
 	srand(time(NULL));
@@ -50,9 +51,12 @@ bool Init() {
 
 	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 	return success;
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 };
 void exit() {
 	SDL_DestroyRenderer(gRenderer);
+	IMG_Quit();
+	Mix_Quit();
 	SDL_DestroyWindow(gWindow);
 };
 
@@ -60,9 +64,32 @@ int main(int agrc, char* argv[]) {
 	
 	if (Init()) {
 		Game game(gRenderer, gFont);
+		//game.playIntro();
 		while (!game.quit && game.status != GAME_EXIT) {
 			game.handleGameStatus();
 		}
+		/*SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+		View view(gRenderer);
+		view.loadTexture("textures/hard_drop.png");
+		view.setW(30);
+		view.setH(300);
+		view.setCenterPoint({ 300,300 });
+		View view2(gRenderer);
+		view2.loadTexture("textures/hard_drop.png");
+		view2.setW(30);
+		view2.setH(300);
+		view2.setCenterPoint({ 360,300 });
+		view2.setAnimation("Cut Down", 1000);
+		//view.angle = 0;
+		//Animation* a = new Animation("Rotate", 6000, 1000, NULL);
+		//view.setAnimation(a);
+		while (true) {
+			SDL_SetRenderDrawColor(gRenderer, 30, 61, 79, 255);
+			SDL_RenderClear(gRenderer);
+			view.render(true);
+			view2.render();
+			SDL_RenderPresent(gRenderer);
+		}*/
 	};
 	exit();
 	return 0;

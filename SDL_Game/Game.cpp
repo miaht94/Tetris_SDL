@@ -6,12 +6,33 @@ Game::Game(SDL_Renderer* gRenderer, TTF_Font* font)
 	this->board.setRenderer(gRenderer);
 	Game::configResource();
 }
+void Game::playIntro()
+{
+	arr_view[INTRO_1].setAnimation("Fade In", 3000);
+	arr_view[INTRO_1].setAnimation("Transform", 3000, NULL, {0, -100});
+	arr_view[INTRO_1].setAnimation("Fade Out", 3000, 6000);
+	arr_view[INTRO_2].setAnimation("Fade In", 3000);
+	arr_view[INTRO_2].setAnimation("Transform", 3000, NULL, { 0, -100 });
+	arr_view[INTRO_2].setAnimation("Fade Out", 3000, 6000);
+	while (arr_view[INTRO_1].animation_queue.size() != 0) {
+		SDL_SetRenderDrawColor(this->gRenderer, 255, 255, 255, 255);
+		SDL_RenderClear(this->gRenderer);
+		arr_view[INTRO_1].render(true);
+		SDL_RenderPresent(this->gRenderer);
+	}
+	while (arr_view[INTRO_2].animation_queue.size() != 0) {
+		SDL_SetRenderDrawColor(this->gRenderer, 255, 255, 255, 255);
+		SDL_RenderClear(this->gRenderer);
+		arr_view[INTRO_2].render(true);
+		SDL_RenderPresent(this->gRenderer);
+	}
+}
 void Game::configResource() {
 
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+	//SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 	SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 	//Init Color
-	color[SCORE_COLOR] = { 255,255,255 };
+	color[SCORE_COLOR] = { 223,40,128 };
 
 	//Init Audio
 	this->gMix[DROP_CHUNK] = Mix_LoadWAV("audio/Drop.wav");
@@ -25,6 +46,15 @@ void Game::configResource() {
 	arr_view[BACKGROUND_VIEW].setRenderer(this->gRenderer);
 	arr_view[HIGH_SCORE_FRAME].setRenderer(this->gRenderer);
 	arr_view[SCORE_FRAME].setRenderer(this->gRenderer);
+	arr_view[INTRO_1].setRenderer(this->gRenderer);
+	arr_view[INTRO_2].setRenderer(this->gRenderer);
+		//Load Texture
+		arr_view[NOTIFICATION_VIEW].loadTexture("textures/frame.png");
+		arr_view[BACKGROUND_VIEW].loadTexture("textures/ingame_background.jpg");
+		arr_view[HIGH_SCORE_FRAME].loadTexture("textures/high_score_frame.png");
+		arr_view[SCORE_FRAME].loadTexture("textures/score_frame.png");
+		arr_view[INTRO_1].loadTexture("textures/intro_1.png");
+		arr_view[INTRO_2].loadTexture("textures/intro_2.png");
 		//Set attribute
 		arr_view[NOTIFICATION_VIEW].width_render = 310;
 		arr_view[NOTIFICATION_VIEW].height_render = 200;
@@ -34,21 +64,19 @@ void Game::configResource() {
 		arr_view[BACKGROUND_VIEW].height_render = SCREEN_HEIGHT;
 		arr_view[BACKGROUND_VIEW].clip = new SDL_Rect({ 0,0,SCREEN_WIDTH,SCREEN_HEIGHT });
 
-		arr_view[HIGH_SCORE_FRAME].width_render = 300;
+		arr_view[HIGH_SCORE_FRAME].width_render = 180;
 		arr_view[HIGH_SCORE_FRAME].height_render = 180;
-		arr_view[HIGH_SCORE_FRAME].setCenterPoint({ 175, 150 });
+		arr_view[HIGH_SCORE_FRAME].setCenterPoint({ 100, 150 });
 		arr_view[HIGH_SCORE_FRAME].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
 
-		arr_view[SCORE_FRAME].width_render = 300;
+		arr_view[SCORE_FRAME].width_render = 180;
 		arr_view[SCORE_FRAME].height_render = 180;
-		arr_view[SCORE_FRAME].setCenterPoint({ 175, 500 });
+		arr_view[SCORE_FRAME].setCenterPoint({ 100, 360 });
 		arr_view[SCORE_FRAME].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
 
-		//Load Texture
-		arr_view[NOTIFICATION_VIEW].loadTexture("textures/frame.png");
-		arr_view[BACKGROUND_VIEW].loadTexture("textures/ingame_background.jpg");
-		arr_view[HIGH_SCORE_FRAME].loadTexture("textures/score_frame.png");
-		arr_view[SCORE_FRAME].loadTexture("textures/score_frame.png");
+		arr_view[INTRO_1].setCenterPoint({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 100 });
+		arr_view[INTRO_2].setCenterPoint({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 100 });
+
 	//Init Text
 	arr_textview[SCORE_TEXT] = TextView(this->font, FONT_SIZE);
 	arr_textview[SCORE_NUMBER] = TextView(this->font, FONT_SIZE);
@@ -65,9 +93,9 @@ void Game::configResource() {
 		arr_textview[COMBO].setRenderer(this->gRenderer);
 
 		//set default text
-		arr_textview[SCORE_TEXT].makeTextTexture("Score", 36, color[SCORE_COLOR]);
+		//arr_textview[SCORE_TEXT].makeTextTexture("Score", 36, color[SCORE_COLOR]);
 		arr_textview[SCORE_NUMBER].makeTextTexture("0", 36, color[SCORE_COLOR]);
-		arr_textview[HIGH_SCORE_TEXT].makeTextTexture("High Score", 36, {255,255,255});
+		//arr_textview[HIGH_SCORE_TEXT].makeTextTexture("High Score", 36, {255,255,255});
 		arr_textview[HIGH_SCORE_NUMBER].makeTextTexture("0", 36, color[SCORE_COLOR]);
 		arr_textview[PAUSE_TEXT].makeTextTexture("GAME PAUSED", FONT_SIZE, { 255,255,255 });
 
@@ -249,9 +277,8 @@ void Game::onPause()
 
 void Game::playGame()
 {
-	cout << SCREEN_WIDTH << "    -    " << SCREEN_HEIGHT << endl;
+	//cout << SCREEN_WIDTH << "    -    " << SCREEN_HEIGHT << endl;
 	Uint32 prev_time = 0;
-	Uint32 prev_fall_time = 0;
 	bool game_over = false;
 	while (!(this->quit) && !game_over && this->status == GAME_PLAYING) {
 		std::string score = "";
@@ -265,10 +292,10 @@ void Game::playGame()
 		Game::handleGameStatus();
 		SDL_SetRenderDrawColor(this->gRenderer, 255, 255, 255, 255);
 		SDL_RenderClear(this->gRenderer);
-		Uint32 curr_time = SDL_GetTicks();
+		this->curr_time = SDL_GetTicks();
 		//if (arr_textview[COMBO].animation_queue.size() == 0 && arr_textview[COMBO].texture!=NULL) 
 		//	arr_textview[COMBO].setAnimation("Disappear", 1000,1000);
-		if (curr_time - prev_fall_time >= 1000/this->curr_level || this->hard_drop/*&& this->board.animationEnded()*/) {
+		if (this->curr_time - this->prev_fall_time >= 1000/this->curr_level || this->hard_drop/*&& this->board.animationEnded()*/) {
 			this->hard_drop = false;
 			SDL_Point next_point = { this->curr_block.matrix_origin_point.x,this->curr_block.matrix_origin_point.y + 1 };
 			if (this->board.isAvailable(this->curr_block.matrix, this->board.static_board, next_point, this->curr_block.current_block)) {
@@ -276,8 +303,8 @@ void Game::playGame()
 			}
 			else {
 				playMusic(gMix[DROP_CHUNK]);
-				board.setMatrix(this->curr_block.matrix, this->board.static_board, this->curr_block.matrix_origin_point, this->curr_block.current_block);
-				game_over = this->board.isGameOver();
+				board.setMatrixToStaticBoard(this->curr_block);
+ 				game_over = this->board.isGameOver();
 				(game_over) ? cout << "Game Over" << endl : cout << "";
 				long curr_turn_point = board.checkGainPoint();
 				Block next_block;
@@ -323,11 +350,11 @@ void Game::handleGameStatus()
 	};
 	if (this->status == GAME_ON_GUI) {
 		this->onGUI();
-	}
+	};
 	if (this->status == GAME_REPLAY) {
 		this->status = GAME_PLAYING;
 		this->playGame();
-	}
+	};
 }
 void Game::renderCurrentGame(int arg_status) {
 	if (arg_status == -1) arg_status = this->status;
@@ -335,7 +362,7 @@ void Game::renderCurrentGame(int arg_status) {
 		SDL_Rect blur_background = { BOARD_VIEWPORT.x,BOARD_VIEWPORT.y,BOARD_VIEWPORT.w,BOARD_VIEWPORT.h };
 		SDL_Rect board_stroke = { BOARD_VIEWPORT.x,BOARD_VIEWPORT.y,BOARD_VIEWPORT.w,BOARD_VIEWPORT.h };
 		this->arr_view[BACKGROUND_VIEW].render();
-		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+		SDL_SetRenderDrawColor(gRenderer, 30, 61, 79, 255);
 		SDL_RenderFillRect(this->gRenderer, &blur_background);
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
 		SDL_RenderDrawRect(this->gRenderer, &blur_background);
@@ -365,8 +392,11 @@ void Game::renderCurrentGame(int arg_status) {
 }
 void Game::handleEvent(const Uint8* current_key_state, Uint32& prev_time)
 {
+
 	if (this->status == GAME_PLAYING) {
 		// Handle Keyboard
+		cout << TIME_HOLDER[SPACE] << "   -   " << (int)current_key_state[SDL_SCANCODE_SPACE] << endl;
+
 		int time_offset = SDL_GetTicks() - prev_time;
 		if (current_key_state[SDL_SCANCODE_LEFT])
 			this->TIME_HOLDER[LEFT_ARROW] += time_offset;
@@ -383,10 +413,13 @@ void Game::handleEvent(const Uint8* current_key_state, Uint32& prev_time)
 		if (current_key_state[SDL_SCANCODE_RIGHT])
 			this->TIME_HOLDER[RIGHT_ARROW] += time_offset;
 		else this->TIME_HOLDER[RIGHT_ARROW] = 0;
+		if (!current_key_state[SDL_SCANCODE_SPACE] && TIME_HOLDER[SPACE] == -1) {
+			TIME_HOLDER[SPACE] = 0;
+		};
 
-		if (current_key_state[SDL_SCANCODE_SPACE])
+		if (current_key_state[SDL_SCANCODE_SPACE] && TIME_HOLDER[SPACE] != -1)
 			this->TIME_HOLDER[SPACE] += time_offset;
-		else this->TIME_HOLDER[SPACE] = 0;
+		//else this->TIME_HOLDER[SPACE] = 0;
 		//Handle Mouse
 		for (int i = 0; i < 1; i++) {
 			this->arr_button[i].handleMouseEvent(&this->e);
@@ -396,17 +429,12 @@ void Game::handleEvent(const Uint8* current_key_state, Uint32& prev_time)
 		//Process after Player's Event Done
 			// Keyboard
 		if (this->TIME_HOLDER[SPACE] > 5) {
-			SDL_Point next_origin_point = { this->curr_block.matrix_origin_point.x, this->curr_block.matrix_origin_point.y + 1 };
-			if (this->board.isAvailable(this->curr_block.matrix, this->board.static_board, next_origin_point, this->curr_block.current_block)) {
-				this->curr_block.matrix_origin_point = next_origin_point;
-				next_origin_point.y++;
-				//Mix_PlayChannel(-1, gMix[MOVE_CHUNK], 0);
-			}
-			else {
-				this->hard_drop = true;
-				//playMusic(this->gMix[DROP_CHUNK]);
-			}
-			this->TIME_HOLDER[SPACE] = 0;
+			this->board.drawHardDropEffect(this->curr_block);
+			SDL_Point next_origin_point = board.getEndPoint(this->curr_block);
+			this->curr_block.matrix_origin_point = next_origin_point;
+			this->hard_drop = true;
+			//playMusic(this->gMix[DROP_CHUNK]);
+			this->TIME_HOLDER[SPACE] = -1;
 			//prev_time -= 1000;
 		};
 		if (this->TIME_HOLDER[UP_ARROW] > 80) {
@@ -441,6 +469,7 @@ void Game::handleEvent(const Uint8* current_key_state, Uint32& prev_time)
 			if (this->board.isAvailable(this->curr_block.matrix, this->board.static_board, next_origin_point, this->curr_block.current_block)) {
 				this->curr_block.matrix_origin_point = next_origin_point;
 				this->TIME_HOLDER[DOWN_ARROW] = 0;
+				this->prev_fall_time = SDL_GetTicks();
 				//Mix_PlayChannel(-1, gMix[MOVE_CHUNK], 0);
 			};
 		};

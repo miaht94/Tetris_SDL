@@ -33,12 +33,14 @@ const SDL_Rect SCORE_VIEWPORT = { BOARD_VIEWPORT.w, 0, 198, TASK_BAR_VIEWPORT.h 
 const int SCREEN_WIDTH = BOARD_VIEWPORT.w + SCORE_VIEWPORT.w;
 const int SCREEN_HEIGHT = BOARD_VIEWPORT.h + TASK_BAR_VIEWPORT.h;
 
-//View index in arr_textview
-const int NUMBER_ELEMENT_VIEW	= 4;
+//View index in arr_view
+const int NUMBER_ELEMENT_VIEW	= 6;
 const int NOTIFICATION_VIEW		= 0;
 const int BACKGROUND_VIEW		= 1;
 const int HIGH_SCORE_FRAME		= 2;
 const int SCORE_FRAME			= 3;
+const int INTRO_1				= 4;
+const int INTRO_2				= 5;
 
 //TextView index in arr_textview
 const int NUMBER_ELEMENT_TEXTVIEW				= 6;

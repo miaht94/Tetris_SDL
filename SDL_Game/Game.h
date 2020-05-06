@@ -30,6 +30,8 @@ class Game
 
 		int TIME_HOLDER[5] = { 0, 0, 0, 0, 0 };
 		
+		Uint32 prev_fall_time = 0;
+		Uint32 curr_time = 0;
 		int curr_high_score = 0;
 		int curr_score = 0;
 		int audio_status = 4; // 4 on 5 off
@@ -37,7 +39,7 @@ class Game
 		bool quit = false;
 
 		Game(SDL_Renderer* gRenderer, TTF_Font* font);
-
+		void playIntro();
 		void configResource();
 		void playMusic(Mix_Chunk* chunk = NULL, Mix_Music* music = NULL);
 		void onGUI();
