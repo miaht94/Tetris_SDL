@@ -18,8 +18,6 @@ View::View(string path, int x, int y) {
 };
 
 View::~View() {
-	if (this->texture != NULL)
-		SDL_DestroyTexture(this->texture);
 }
 
 int View::getX() {

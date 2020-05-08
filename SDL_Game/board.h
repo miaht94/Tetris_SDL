@@ -19,8 +19,7 @@ class Board
 		//array for rendering what player can see
 		//static board will be update whenever block finished its fall
 		int** static_board = new int*[HEIGHT_SQUARE + OFFSET_Y + 1];
-		vector<SDL_Point> delete_queue;
-		View* pieces = new View[14];
+		View* pieces = new View[15];
 		View block_square[4][4];
 		View square[HEIGHT_SQUARE][WIDTH_SQUARE];
 

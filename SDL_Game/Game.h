@@ -49,5 +49,6 @@ class Game
 		void renderCurrentGame(int arg_status);
 		void handleEvent(const Uint8* current_key_state, Uint32& prev_time);
 		void onReplay();
+		void onGameOver();
 };
 

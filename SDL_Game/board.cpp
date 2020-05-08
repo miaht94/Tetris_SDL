@@ -29,7 +29,7 @@ Board::Board(SDL_Renderer* renderer)
 
 Board::~Board()
 {
-	
+	this->arr_effect.clear(); 
 }
 void Board::initMaterial()
 {
@@ -48,6 +48,8 @@ void Board::initMaterial()
 	(this->pieces)[12].loadTexture("textures/block_killed.png") != true ? std::cout << "Couldn't load texture /textures/block_killed.png in initMaterial for Board" << std::endl : std::cout << "";
 	(this->pieces)[13].loadTexture("textures/hard_drop.png") != true ? std::cout << "Couldn't load texture /textures/hard_drop.png in initMaterial for Board" << std::endl : std::cout << "";
 	(this->pieces)[13].setAlpha(150);
+	(this->pieces)[14].loadTexture("textures/star.png") != true ? std::cout << "Couldn't load texture /textures/star.png in initMaterial for Board" << std::endl : std::cout << "";
+	(this->pieces)[14].setAlpha(190);
 }
 ;
 
@@ -68,6 +70,7 @@ void Board::setRenderer(SDL_Renderer* renderer)
 	(this->pieces)[11].renderer = this->renderer;
 	(this->pieces)[12].renderer = this->renderer;
 	(this->pieces)[13].renderer = this->renderer;
+	(this->pieces)[14].renderer = this->renderer;
 	for (int i = 0; i < HEIGHT_SQUARE; i++) {
 		for (int j = 0; j < WIDTH_SQUARE; j++) {
 			this->square[i][j] = View(this->renderer);
@@ -198,7 +201,6 @@ long Board::checkGainPoint()
 				new_effect->setAnimation("Scale Up", 300,20*j);
 				new_effect->setAnimation("Disappear", 200, 300 + 20*j);
 				this->arr_effect.push_back(new_effect);
-				//this->delete_queue.push_back({ i, j });
 			}
 			score_gained += 100;
 
@@ -244,6 +246,7 @@ void Board::update()
 	vector<View*>::iterator it = this->arr_effect.begin();
 	while (it != this->arr_effect.end()) {
 		if ((*it)->animation_queue.size() == 0) {
+			delete (*it);
 			this->arr_effect.erase(it);
 			it = this->arr_effect.begin();
 			continue;
@@ -310,6 +313,27 @@ void Board::drawHardDropEffect(const Block& block)
 				new_effect->setRect(rect_effect);
 				new_effect->setAnimation("Cut Down", 300);
 				this->addViewEffect(new_effect);
+
+				// render stars
+				int rows_number = rect_effect.h / LENGTH_SQUARE;
+				int number_stars = rows_number != 0 ? rand() % rows_number /2 : 0;
+				for (int k = 0; k < number_stars; k++) {
+					View* new_star = new View(this->renderer);
+					SDL_Rect rect_star;
+					rect_star.x = 8 + rand() % (LENGTH_SQUARE - 8 )+ rect_effect.x;
+					rect_star.y = rand() % rect_effect.h + rect_effect.y;
+					rect_star.w = (double(rect_star.y) - double(rect_effect.y)) / double(rect_effect.h) * 25;
+					if (rect_star.w >= 100) rect_star.w = 0;
+					rect_star.h = rect_star.w;
+					new_star->texture = this->pieces[14].texture;
+					new_star->setRect(rect_star);
+					new_star->setAnimation("Disappear", 800 * (double(rect_star.y) - double(rect_effect.y)) / double(rect_effect.h));
+					Animation* a = new Animation("Rotate", 800, 120, NULL);
+					new_star->setAnimation(a);
+					SDL_Point transform_vector = {0 , -(rand() % 10 + 1) };
+					new_star->setAnimation("Transform", 800,NULL, transform_vector);
+					this->addViewEffect(new_star);
+				}
 			}
 		}
 	}
@@ -380,11 +404,31 @@ void Board::renderEffect()
 }
 void Board::reset()
 {
-	for (int i = 0; i < HEIGHT_SQUARE; i++) {
+	/*for (int i = 0; i < HEIGHT_SQUARE; i++) {
 		for (int j = 0; j < WIDTH_SQUARE; j++) {
 			this->board[i + OFFSET_Y][j + OFFSET_X] = 0;
 			this->static_board[i + OFFSET_Y][j + OFFSET_X] = 0;
 		}
-	}
+	}*/
+	for (int i = 0; i < HEIGHT_SQUARE + OFFSET_Y + 1; i++) {
+		(this->static_board)[i] = new int[WIDTH_SQUARE + 2 * OFFSET_X];
+	};
+	for (int i = 0; i < HEIGHT_SQUARE + OFFSET_Y + 1; i++) {
+		for (int j = 0; j < WIDTH_SQUARE + 2 * OFFSET_X; j++) {
+			(this->static_board)[i][j] = 0;
+		}
+	};
+	for (int i = 0; i < WIDTH_SQUARE + 2 * OFFSET_X; i++) {
+		this->board[HEIGHT_SQUARE + OFFSET_Y][i] = 1;
+		this->static_board[HEIGHT_SQUARE + OFFSET_Y][i] = 1;
+	};
+	for (int i = 0; i < HEIGHT_SQUARE + OFFSET_Y; i++) {
+		for (int j = 0; j < OFFSET_X; j++) {
+			this->board[i][j] = 1;
+			this->static_board[i][j] = 1;
+			this->board[i][WIDTH_SQUARE + 2 * OFFSET_X - j - 1] = 1;
+			this->static_board[i][WIDTH_SQUARE + 2 * OFFSET_X - j - 1] = 1;
+		}
+	};
 }
 ;

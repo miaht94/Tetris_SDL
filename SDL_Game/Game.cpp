@@ -35,11 +35,13 @@ void Game::configResource() {
 	color[SCORE_COLOR] = { 223,40,128 };
 
 	//Init Audio
-	this->gMix[DROP_CHUNK] = Mix_LoadWAV("audio/Drop.wav");
-	this->gMix[MOVE_CHUNK] = Mix_LoadWAV("audio/Move.wav");
-	this->gMix[GAME_OVER_CHUNK] = Mix_LoadWAV("audio/GameOver.wav");
+	this->background_music = Mix_LoadMUS("audio/Background.wav");
+	this->gMix[DROP_CHUNK] = Mix_LoadWAV("audio/lock.wav");
+	this->gMix[MOVE_CHUNK] = Mix_LoadWAV("audio/move.wav");
+	this->gMix[GAME_OVER_CHUNK] = Mix_LoadWAV("audio/gameover.wav");
+	this->gMix[ROTATE_CHUNK] = Mix_LoadWAV("audio/rotate.wav");
+	this->gMix[HARD_DROP_CHUNK] = Mix_LoadWAV("audio/hardDrop.wav");
 	this->gMix[LINE_CLEAR_CHUNK] = Mix_LoadWAV("audio/Lineclear.wav");
-
 //INIT GAME_PLAYING_________________________________________________________________________
 	//Init View
 	arr_view[NOTIFICATION_VIEW].setRenderer(this->gRenderer);
@@ -84,6 +86,7 @@ void Game::configResource() {
 	arr_textview[HIGH_SCORE_NUMBER] = TextView(this->font, FONT_SIZE);
 	arr_textview[PAUSE_TEXT] = TextView(this->font, FONT_SIZE);
 	arr_textview[COMBO] = TextView(this->font, FONT_SIZE);
+	arr_textview[GAME_OVER_TEXT] = TextView(this->font, FONT_SIZE);
 		//set Renderer
 		arr_textview[HIGH_SCORE_TEXT].setRenderer(this->gRenderer);
 		arr_textview[HIGH_SCORE_NUMBER].setRenderer(this->gRenderer);
@@ -91,6 +94,7 @@ void Game::configResource() {
 		arr_textview[SCORE_NUMBER].setRenderer(this->gRenderer);
 		arr_textview[PAUSE_TEXT].setRenderer(this->gRenderer);
 		arr_textview[COMBO].setRenderer(this->gRenderer);
+		arr_textview[GAME_OVER_TEXT].setRenderer(this->gRenderer);
 
 		//set default text
 		//arr_textview[SCORE_TEXT].makeTextTexture("Score", 36, color[SCORE_COLOR]);
@@ -98,7 +102,7 @@ void Game::configResource() {
 		//arr_textview[HIGH_SCORE_TEXT].makeTextTexture("High Score", 36, {255,255,255});
 		arr_textview[HIGH_SCORE_NUMBER].makeTextTexture("0", 36, color[SCORE_COLOR]);
 		arr_textview[PAUSE_TEXT].makeTextTexture("GAME PAUSED", FONT_SIZE, { 255,255,255 });
-
+		arr_textview[GAME_OVER_TEXT].makeTextTexture("GAME OVER", FONT_SIZE, { 255,255,255 });
 		//set attribute
 		//arr_textview[SCORE_TEXT].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
 		//arr_textview[SCORE_NUMBER].origin_point = { SCORE_VIEWPORT.x, SCORE_VIEWPORT.y };
@@ -111,23 +115,26 @@ void Game::configResource() {
 		arr_textview[SCORE_TEXT].setCenterPoint({ arr_view[SCORE_FRAME].width_render / 2, 30 });
 		arr_textview[SCORE_NUMBER].setCenterPoint({ arr_view[HIGH_SCORE_FRAME].width_render / 2, 120 });
 		arr_textview[COMBO].setCenterPoint({ 200,460 });
+		arr_textview[GAME_OVER_TEXT].setCenterPoint({ arr_view[NOTIFICATION_VIEW].width_render / 2,arr_view[NOTIFICATION_VIEW].height_render / 3 });
 	//set textview's background
 		arr_textview[PAUSE_TEXT].setViewBackground(arr_view[NOTIFICATION_VIEW]);
 		arr_textview[SCORE_TEXT].setViewBackground(arr_view[SCORE_FRAME]);
 		arr_textview[SCORE_NUMBER].setViewBackground(arr_view[SCORE_FRAME]);
 		arr_textview[HIGH_SCORE_TEXT].setViewBackground(arr_view[HIGH_SCORE_FRAME]);
 		arr_textview[HIGH_SCORE_NUMBER].setViewBackground(arr_view[HIGH_SCORE_FRAME]);
+		arr_textview[GAME_OVER_TEXT].setViewBackground(arr_view[NOTIFICATION_VIEW]);
 	//_______________________________________________________________________________________________
 
 	//config button
 	arr_button[PAUSE_BUTTON] = Button();
 	arr_button[RESUME_BUTTON] = Button();
 	arr_button[REPLAY_BUTTON] = Button();
-
+	arr_button[HOME_BUTTON] = Button();
 	//set Renderer
 	arr_button[PAUSE_BUTTON].setRenderer(this->gRenderer);
 	arr_button[RESUME_BUTTON].setRenderer(this->gRenderer);
 	arr_button[REPLAY_BUTTON].setRenderer(this->gRenderer);
+	arr_button[HOME_BUTTON].setRenderer(this->gRenderer);
 	//set attribute
 		arr_button[PAUSE_BUTTON].origin_point = { TASK_BAR_VIEWPORT.x, TASK_BAR_VIEWPORT.y };
 		arr_button[PAUSE_BUTTON].width_render = 55;
@@ -139,18 +146,23 @@ void Game::configResource() {
 		arr_button[REPLAY_BUTTON].width_render = 60;
 		arr_button[REPLAY_BUTTON].height_render = 60;
 
+		arr_button[HOME_BUTTON].width_render = 60;
+		arr_button[HOME_BUTTON].height_render = 60;
+
 	//set center point render
 		arr_button[PAUSE_BUTTON].setCenterPoint({ 420,30 });
-		arr_button[RESUME_BUTTON].setCenterPoint({ arr_view[NOTIFICATION_VIEW].width_render * 1 / 4,arr_view[NOTIFICATION_VIEW].height_render * 2 / 3 });
-		arr_button[REPLAY_BUTTON].setCenterPoint({ arr_view[NOTIFICATION_VIEW].width_render * 3 / 4,arr_view[NOTIFICATION_VIEW].height_render * 2 / 3 });
-	
+		arr_button[RESUME_BUTTON].setCenterPoint({ arr_view[NOTIFICATION_VIEW].width_render * 2 / 4,arr_view[NOTIFICATION_VIEW].height_render * 2 / 3 });
+		arr_button[REPLAY_BUTTON].setCenterPoint({ arr_view[NOTIFICATION_VIEW].width_render * 1 / 4,arr_view[NOTIFICATION_VIEW].height_render * 2 / 3 });
+		arr_button[HOME_BUTTON].setCenterPoint({ arr_view[NOTIFICATION_VIEW].width_render * 3 / 4,arr_view[NOTIFICATION_VIEW].height_render * 2 / 3 });
 	//load texture for button
-		arr_button[PAUSE_BUTTON].loadTexture("textures/play_but_lighter.png", "textures/play_but.png");
+		arr_button[PAUSE_BUTTON].loadTexture("textures/pause_but_lighter.png", "textures/pause_but.png");
 		arr_button[RESUME_BUTTON].loadTexture("textures/play_but_lighter.png", "textures/play_but.png");
 		arr_button[REPLAY_BUTTON].loadTexture("textures/replay_but_lighter.png", "textures/replay_but.png");
+		arr_button[HOME_BUTTON].loadTexture("textures/home_but_lighter.png", "textures/home_but.png");
 	//set button's background
 		arr_button[RESUME_BUTTON].setViewBackground(arr_view[NOTIFICATION_VIEW]);
 		arr_button[REPLAY_BUTTON].setViewBackground(arr_view[NOTIFICATION_VIEW]);
+		arr_button[HOME_BUTTON].setViewBackground(arr_view[NOTIFICATION_VIEW]);
 //__________________________________________________________________________________________________________________________________________________________
 
 //INIT GUI
@@ -233,6 +245,13 @@ void Game::playMusic(Mix_Chunk* chunk, Mix_Music* music)
 }
 void Game::onGUI()
 {
+	gui_view[GAME_TITLE].width_render = 200;
+	gui_view[GAME_TITLE].height_render = 70;
+	gui_view[GAME_TITLE].setCenterPoint({ -115,100 });
+
+	gui_view[MENU_BACKGROUND].width_render = 310;
+	gui_view[MENU_BACKGROUND].height_render = 230;
+	gui_view[MENU_BACKGROUND].setCenterPoint({ -100,300 });
 	gui_view[GAME_TITLE].setAnimation("Transform", 500, NULL ,{ 200,0 });
 	gui_view[MENU_BACKGROUND].setAnimation("Transform", 800, NULL, { 200,0 });
 	Uint32 temp;
@@ -305,7 +324,9 @@ void Game::playGame()
 				playMusic(gMix[DROP_CHUNK]);
 				board.setMatrixToStaticBoard(this->curr_block);
  				game_over = this->board.isGameOver();
-				(game_over) ? cout << "Game Over" << endl : cout << "";
+				if (game_over) {
+					this->status = GAME_OVER;
+				}
 				long curr_turn_point = board.checkGainPoint();
 				Block next_block;
 				this->curr_block = next_block;
@@ -346,15 +367,26 @@ void Game::playGame()
 void Game::handleGameStatus()
 {
 	if (this->status == GAME_PAUSED) {
+		if (Mix_PausedMusic() != 1)
+			Mix_PauseMusic();
 		this->onPause();
 	};
 	if (this->status == GAME_ON_GUI) {
+		Mix_HaltMusic();
+		this->board.reset();
 		this->onGUI();
 	};
 	if (this->status == GAME_REPLAY) {
 		this->status = GAME_PLAYING;
+		Mix_HaltMusic();
+		this->playMusic(NULL, this->background_music);
 		this->playGame();
 	};
+	if (this->status == GAME_OVER) {
+		Mix_HaltMusic();
+		playMusic(this->gMix[GAME_OVER_CHUNK]);
+		this->onGameOver();
+	}
 }
 void Game::renderCurrentGame(int arg_status) {
 	if (arg_status == -1) arg_status = this->status;
@@ -388,6 +420,17 @@ void Game::renderCurrentGame(int arg_status) {
 		arr_textview[PAUSE_TEXT].render(true);
 		arr_button[RESUME_BUTTON].render(true);
 		arr_button[REPLAY_BUTTON].render(true);
+		arr_button[HOME_BUTTON].render(true);
+	}
+	else if (arg_status == GAME_OVER) {
+		this->renderCurrentGame(GAME_PLAYING);
+		SDL_Rect blur_background = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
+		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 60);
+		SDL_RenderFillRect(this->gRenderer, &blur_background);
+		arr_view[NOTIFICATION_VIEW].render(true);
+		arr_textview[GAME_OVER_TEXT].render(true);
+		arr_button[REPLAY_BUTTON].render(true);
+		arr_button[HOME_BUTTON].render(true);
 	}
 }
 void Game::handleEvent(const Uint8* current_key_state, Uint32& prev_time)
@@ -433,7 +476,7 @@ void Game::handleEvent(const Uint8* current_key_state, Uint32& prev_time)
 			SDL_Point next_origin_point = board.getEndPoint(this->curr_block);
 			this->curr_block.matrix_origin_point = next_origin_point;
 			this->hard_drop = true;
-			//playMusic(this->gMix[DROP_CHUNK]);
+			playMusic(this->gMix[HARD_DROP_CHUNK]);
 			this->TIME_HOLDER[SPACE] = -1;
 			//prev_time -= 1000;
 		};
@@ -445,7 +488,7 @@ void Game::handleEvent(const Uint8* current_key_state, Uint32& prev_time)
 			if (this->board.isAvailable(temp_matrix, this->board.static_board, this->curr_block.matrix_origin_point, this->curr_block.current_block)) {
 				this->curr_block.rotate();
 				this->TIME_HOLDER[UP_ARROW] = 0;
-				//Mix_PlayChannel(-1, gMix[MOVE_CHUNK], 0);
+				Mix_PlayChannel(-1, gMix[ROTATE_CHUNK], 0);
 			}
 		};
 		if (this->TIME_HOLDER[LEFT_ARROW] > 50) {
@@ -453,7 +496,7 @@ void Game::handleEvent(const Uint8* current_key_state, Uint32& prev_time)
 			if (this->board.isAvailable(this->curr_block.matrix, this->board.static_board, next_origin_point, this->curr_block.current_block)) {
 				this->curr_block.matrix_origin_point = next_origin_point;
 				this->TIME_HOLDER[LEFT_ARROW] = 0;
-				//Mix_PlayChannel(-1, gMix[MOVE_CHUNK], 0);
+				Mix_PlayChannel(-1, gMix[MOVE_CHUNK], 0);
 			};
 		};
 		if (this->TIME_HOLDER[RIGHT_ARROW] > 50) {
@@ -461,7 +504,7 @@ void Game::handleEvent(const Uint8* current_key_state, Uint32& prev_time)
 			if (this->board.isAvailable(this->curr_block.matrix, this->board.static_board, next_origin_point, this->curr_block.current_block)) {
 				this->curr_block.matrix_origin_point = next_origin_point;
 				this->TIME_HOLDER[RIGHT_ARROW] = 0;
-				//Mix_PlayChannel(-1, gMix[MOVE_CHUNK], 0);
+				Mix_PlayChannel(-1, gMix[MOVE_CHUNK], 0);
 			};
 		};
 		if (this->TIME_HOLDER[DOWN_ARROW] > 50) {
@@ -470,7 +513,7 @@ void Game::handleEvent(const Uint8* current_key_state, Uint32& prev_time)
 				this->curr_block.matrix_origin_point = next_origin_point;
 				this->TIME_HOLDER[DOWN_ARROW] = 0;
 				this->prev_fall_time = SDL_GetTicks();
-				//Mix_PlayChannel(-1, gMix[MOVE_CHUNK], 0);
+				Mix_PlayChannel(-1, gMix[MOVE_CHUNK], 0);
 			};
 		};
 
@@ -483,13 +526,20 @@ void Game::handleEvent(const Uint8* current_key_state, Uint32& prev_time)
 	else if (this->status == GAME_PAUSED) {
 		arr_button[RESUME_BUTTON].handleMouseEvent(&this->e);
 		arr_button[REPLAY_BUTTON].handleMouseEvent(&this->e);
+		arr_button[HOME_BUTTON].handleMouseEvent(&this->e);
 		if (arr_button[RESUME_BUTTON].beClicked()) {
 			this->status = GAME_PLAYING;
-		}
+			if (Mix_PausedMusic() == 1) {
+				Mix_ResumeMusic();
+			}
+		};
 		if (arr_button[REPLAY_BUTTON].beClicked()) {
 			this->status = GAME_REPLAY;
 			this->onReplay();
-		}
+		};
+		if (arr_button[HOME_BUTTON].beClicked()) {
+			this->status = GAME_ON_GUI;
+		};
 	} 
 	else if (this->status == GAME_ON_GUI) {
 		gui_button[PLAY_GUI_BUTTON].handleMouseEvent(&this->e);
@@ -511,6 +561,21 @@ void Game::handleEvent(const Uint8* current_key_state, Uint32& prev_time)
 			cout << gui_button[this->curr_level].pre_status << endl;*/
 		};
 	}
+	else if (this->status == GAME_OVER) {
+		//arr_button[RESUME_BUTTON].handleMouseEvent(&this->e);
+		arr_button[REPLAY_BUTTON].handleMouseEvent(&this->e);
+		arr_button[HOME_BUTTON].handleMouseEvent(&this->e);
+		//if (arr_button[RESUME_BUTTON].beClicked()) {
+		//	this->status = GAME_PLAYING;
+		//}
+		if (arr_button[REPLAY_BUTTON].beClicked()) {
+			this->status = GAME_REPLAY;
+			this->onReplay();
+		};
+		if (arr_button[HOME_BUTTON].beClicked()) {
+			this->status = GAME_ON_GUI;
+		}
+	}
 }
 void Game::onReplay()
 {
@@ -520,4 +585,24 @@ void Game::onReplay()
 	arr_textview[SCORE_NUMBER].makeTextTexture("0", 36, color[SCORE_COLOR]);
 	arr_textview[SCORE_NUMBER].setCenterPoint({ arr_view[HIGH_SCORE_FRAME].width_render / 2, 120 });
 	arr_textview[SCORE_NUMBER].setViewBackground(arr_view[SCORE_FRAME]);
+}
+
+void Game::onGameOver()
+{
+	arr_view[NOTIFICATION_VIEW].setAnimation("Appear", 200);
+	Uint32 temp;
+	while (this->status == GAME_OVER) {
+		while (SDL_PollEvent(&this->e) != 0) {
+			if (this->e.type == SDL_QUIT) {
+				this->quit = true;
+				this->status = GAME_EXIT;
+			}
+		};
+		this->handleEvent(NULL, temp);
+		if (this->quit == true) break;
+		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+		SDL_RenderClear(gRenderer);
+		renderCurrentGame(-1);
+		SDL_RenderPresent(gRenderer);
+	}
 }

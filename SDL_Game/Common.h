@@ -43,7 +43,7 @@ const int INTRO_1				= 4;
 const int INTRO_2				= 5;
 
 //TextView index in arr_textview
-const int NUMBER_ELEMENT_TEXTVIEW				= 6;
+const int NUMBER_ELEMENT_TEXTVIEW				= 7;
 const int NUMBER_ELEMENT_TEXTVIEW_ON_PLAYING	= 5;
 const int SCORE_TEXT							= 0;
 const int SCORE_NUMBER							= 1;
@@ -51,14 +51,15 @@ const int HIGH_SCORE_TEXT						= 2;
 const int HIGH_SCORE_NUMBER						= 3;
 const int COMBO									= 4;
 const int PAUSE_TEXT							= 5;
-
+const int GAME_OVER_TEXT						= 6;
 
 //Button index in arr_button
-const int NUMBER_ELEMENT_BUTTON				= 3;
+const int NUMBER_ELEMENT_BUTTON				= 4;
 const int NUMBER_ELEMENT_BUTTON_ON_PLAYING	= 1;
 const int PAUSE_BUTTON						= 0;
 const int RESUME_BUTTON						= 1;
 const int REPLAY_BUTTON						= 2;
+const int HOME_BUTTON						= 3;
 
 //View index in gui_view
 const int NUMBER_ELEMENT_GUI_VIEW = 4;
@@ -83,11 +84,13 @@ const int HIGH_SCORE_COLOR		= 1;
 const int PAUSED_TEXT_COLOR		= 2;
 
 //Mix Chunk
-const int NUMBER_ELEMENT_CHUNK = 4;
+const int NUMBER_ELEMENT_CHUNK = 6;
 const int MOVE_CHUNK = 0;
 const int DROP_CHUNK = 1;
 const int LINE_CLEAR_CHUNK = 2;
 const int GAME_OVER_CHUNK = 3;
+const int ROTATE_CHUNK = 4;
+const int HARD_DROP_CHUNK = 5;
 
 
 //Game Status
@@ -96,6 +99,7 @@ const int GAME_PAUSED	= 1;
 const int GAME_ON_GUI	= 3;
 const int GAME_EXIT		= 4;
 const int GAME_REPLAY = 5;
+const int GAME_OVER = 6;
 /*
 Type 1:
 	_____________

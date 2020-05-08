@@ -49,8 +49,8 @@ public:
 	int B = 0;
 
 	// Original Width, Height of source image;
-	int texture_width;
-	int texture_height;
+	int texture_width = 0;
+	int texture_height = 0;
 
 	SDL_Renderer* renderer = NULL;
 

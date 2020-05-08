@@ -91,6 +91,7 @@ int main(int agrc, char* argv[]) {
 			SDL_RenderPresent(gRenderer);
 		}*/
 	};
+	SDL_Delay(200);
 	exit();
 	return 0;
 
