@@ -112,7 +112,7 @@ int View::setTexture(SDL_Texture* texture)
 }
 SDL_Rect View::getOriginalTextureSize()
 {
-	if (this->texture_width == 0 || this->texture_width == 0) {
+	if (this->texture_width == 0 || this->texture_height == 0) {
 		SDL_QueryTexture(this->texture, NULL, NULL, &this->texture_width, &this->texture_height);
 	}
 	return SDL_Rect { 0, 0, texture_width, texture_height };

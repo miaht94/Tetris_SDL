@@ -573,6 +573,7 @@ void Game::handleEvent(const Uint8* current_key_state, Uint32& prev_time)
 			this->onReplay();
 		};
 		if (arr_button[HOME_BUTTON].beClicked()) {
+			this->board.reset();
 			this->status = GAME_ON_GUI;
 		}
 	}

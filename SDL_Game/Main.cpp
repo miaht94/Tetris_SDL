@@ -63,10 +63,10 @@ void exit() {
 int main(int agrc, char* argv[]) {
 	
 	if (Init()) {
-		Game game(gRenderer, gFont);
-		//game.playIntro();
-		while (!game.quit && game.status != GAME_EXIT) {
-			game.handleGameStatus();
+		Game* game = new Game(gRenderer, gFont);
+		//(*game).playIntro();
+		while (!(*game).quit && (*game).status != GAME_EXIT) {
+			(*game).handleGameStatus();
 		}
 		/*SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 		View view(gRenderer);
