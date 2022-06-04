@@ -1,6 +1,7 @@
 # Tetris SDL 2
-*Project game giữa kỳ môn Lập Trình Nâng Cao INT 2215_22 K64-UET-VNU*
-
+*Project game giữa kỳ môn Lập Trình Nâng Cao INT 2215_22 K64-UET-VNU*\
+\
+<img src="https://github.com/miaht94/Tetris_SDL/blob/master/tetris_image.png?raw=true"/>
 ## Plugins
 *Thư viện SDL 2 bao gồm:*
 * [SDL2 ](https://www.libsdl.org/download-2.0.php)
